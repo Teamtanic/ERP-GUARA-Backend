@@ -11,14 +11,18 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import com.guarajunior.rp.exception.InsufficientProductException;
 import com.guarajunior.rp.mapper.TransactionMapper;
 import com.guarajunior.rp.model.BankAccount;
 import com.guarajunior.rp.model.ProductWarehouse;
 import com.guarajunior.rp.model.Transaction;
+import com.guarajunior.rp.model.TransactionProduct;
+import com.guarajunior.rp.model.dto.productwarehouse.ProductTransactionDTO;
 import com.guarajunior.rp.model.dto.transaction.TransactionDTO;
 import com.guarajunior.rp.model.dto.transaction.TransactionResponseDTO;
 import com.guarajunior.rp.repository.BankAccountRepository;
 import com.guarajunior.rp.repository.ProductWarehouseRepository;
+import com.guarajunior.rp.repository.TransactionProductRepository;
 import com.guarajunior.rp.repository.TransactionRepository;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -29,11 +33,13 @@ public class TransactionService {
 	@Autowired
 	private TransactionRepository transactionRepository;
 	@Autowired
-	private TransactionMapper transactionMapper;
-	@Autowired
 	private ProductWarehouseRepository productWarehouseRepository;
 	@Autowired
 	private BankAccountRepository bankAccountRepository;
+	@Autowired
+	private TransactionProductRepository transactionProductRepository;
+	@Autowired
+	private TransactionMapper transactionMapper;
 	
 	public Page<TransactionResponseDTO> listAll(Integer page, Integer size) {
 		Pageable pageable = PageRequest.of(page, size);
@@ -53,19 +59,47 @@ public class TransactionService {
 		
 		transactionToCreate.setBankAccount(bankAccount);
 		
-		List<ProductWarehouse> productsWarehouse = new ArrayList<>();
+		Transaction createdTransaction = transactionRepository.save(transactionToCreate);
 		
-		if(transactionCreateDTO.getProductWarehouseIds() != null) {
-			for (UUID productWarehouseId : transactionCreateDTO.getProductWarehouseIds()) {
-		        ProductWarehouse productWarehouse = productWarehouseRepository.findById(productWarehouseId)
-		                .orElseThrow(() -> new EntityNotFoundException("ProductWarehouse não encontrado com o ID: " + productWarehouseId));
-		        productsWarehouse.add(productWarehouse);
-	    	}
+		List<TransactionProduct> transactionProducts = new ArrayList<>();
+		
+		if(transactionCreateDTO.getProductsWarehouse() != null) {
+			List<ProductTransactionDTO> productDTOs = transactionCreateDTO.getProductsWarehouse();
+			
+			for (ProductTransactionDTO productDTO : productDTOs) {
+				UUID productId = productDTO.getProductId();
+	            Integer quantity = productDTO.getQuantity();
+	            ProductWarehouse productWarehouse = productWarehouseRepository.findById(productId)
+	            		.orElseThrow(() -> new EntityNotFoundException("ProductWarehouse não encontrado com o ID: " + productId));
+	            
+	            Integer productQuantity = productWarehouse.getQuantity();
+	            productQuantity = productQuantity - quantity;
+	            
+	            if(productQuantity < quantity) {
+	            	throw new InsufficientProductException("Produtos insuficientes no estoque: " + productWarehouse.getProduct());
+	            }
+	            
+	            TransactionProduct transactionProduct = new TransactionProduct();
+	            TransactionProduct.TransactionProductKey transactionProductKey = new TransactionProduct.TransactionProductKey();
+	            transactionProductKey.setIdTransaction(createdTransaction.getId());
+	            transactionProductKey.setProductWarehouseId(productId);
+	            transactionProduct.setId(transactionProductKey);
+	            transactionProduct.setProductWarehouse(productWarehouse);
+	            transactionProduct.setQuantity(quantity);
+	            transactionProduct.setTransaction(createdTransaction);
+	            
+	            transactionProductRepository.save(transactionProduct);
+	            
+	            productWarehouse.setQuantity(productQuantity);
+	            productWarehouseRepository.save(productWarehouse);
+	            
+	            transactionProducts.add(transactionProduct);
+			}
 		}
 		
-		transactionToCreate.setProductWarehouse(productsWarehouse);
+		transactionToCreate.setProducts(transactionProducts);
 		
-		Transaction createdTransaction = transactionRepository.save(transactionToCreate);
+		
 		
 		return transactionMapper.toResponseDTO(createdTransaction);
 	}

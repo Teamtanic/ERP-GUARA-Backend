@@ -9,6 +9,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.guarajunior.rp.enums.TransactionType;
+import com.guarajunior.rp.model.dto.productwarehouse.ProductTransactionDTO;
 
 import lombok.Data;
 
@@ -25,5 +26,5 @@ public class TransactionDTO {
 	private LocalDate dtCashflow;
 	private UUID projectId;
 	private UUID bankAccountId;
-	private List<UUID> productWarehouseIds;
+	private List<ProductTransactionDTO> productsWarehouse;
 }

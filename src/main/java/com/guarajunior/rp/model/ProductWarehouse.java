@@ -10,7 +10,6 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
@@ -40,6 +39,6 @@ public class ProductWarehouse {
 	@OneToMany(mappedBy = "product")
     private List<SupplierProduct> supplierProducts;
 	
-	@ManyToMany(mappedBy = "productWarehouse")
-	private List<Transaction> transactions;
+	@OneToMany(mappedBy = "productWarehouse")
+	private List<TransactionProduct> transactions;
 }

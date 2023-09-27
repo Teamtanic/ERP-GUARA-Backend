@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.guarajunior.rp.exception.CompanyServiceException;
+import com.guarajunior.rp.exception.InsufficientProductException;
 import com.guarajunior.rp.model.ErrorResponse;
 import com.guarajunior.rp.model.dto.transaction.TransactionDTO;
 import com.guarajunior.rp.model.dto.transaction.TransactionResponseDTO;

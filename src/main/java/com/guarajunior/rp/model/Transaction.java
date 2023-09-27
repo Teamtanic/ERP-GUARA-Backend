@@ -20,9 +20,8 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import lombok.Data;
@@ -53,13 +52,8 @@ public class Transaction {
 	@CreationTimestamp
 	private Date createdAt;
 	
-	@ManyToMany
-	@JoinTable(
-	        name = "transaction_has_product",
-	        joinColumns = @JoinColumn(name = "id_transaction"),
-	        inverseJoinColumns = @JoinColumn(name = "id_product_warehouse")
-	    )
-	private List<ProductWarehouse> productWarehouse;
+	@OneToMany(mappedBy = "transaction")
+	private List<TransactionProduct> products;
 	
 	@ManyToOne
 	@JoinColumn(name = "id_bank_account", nullable = false, referencedColumnName = "id")
@@ -68,4 +62,6 @@ public class Transaction {
 	@ManyToOne
 	@JoinColumn(name = "id_project", nullable = true, referencedColumnName = "id")
 	private Project project;
+	
+
 }

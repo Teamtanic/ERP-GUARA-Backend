@@ -70,7 +70,6 @@ public class WarehouseService {
 		 // Crie a entrada na tabela de relação supplier_product
 	    SupplierProduct supplierProduct = new SupplierProduct();
 	    SupplierProduct.SupplierProductKey supplierProductKey = new SupplierProduct.SupplierProductKey();
-	    System.out.print("ID RELAÇÃO: " + relation.getIdCompanyRelationship());
 	    supplierProductKey.setCompanyRelationshipId(relation.getIdCompanyRelationship());
 	    supplierProductKey.setProductWarehouseId(createdProduct.getId());
 	    supplierProduct.setId(supplierProductKey);
