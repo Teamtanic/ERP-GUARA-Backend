@@ -23,5 +23,6 @@ public class UserPrivilege {
 	private String description;
 	
     @OneToMany(mappedBy = "userPrivilege")
+    @JsonIgnore
     private List<RoleDepartmentPrivilege> privileges;
 }

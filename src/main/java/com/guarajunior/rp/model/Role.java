@@ -2,6 +2,7 @@ package com.guarajunior.rp.model;
 
 import java.util.UUID;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import java.util.List;
@@ -25,8 +26,10 @@ public class Role {
 	private String name;
 	
 	@OneToMany(mappedBy = "role")
+	@JsonIgnore
 	private List<User> users;
 	
 	@OneToMany(mappedBy = "role")
+	@JsonIgnore
 	private List<RoleDepartmentPrivilege> privileges; 
 }

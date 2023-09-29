@@ -11,7 +11,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class ModelUserDetails implements UserDetails {
+public class CustomUserDetails implements UserDetails {
     /**
 	 * 
 	 */

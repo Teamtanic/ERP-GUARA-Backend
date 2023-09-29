@@ -11,11 +11,11 @@ import com.guarajunior.rp.repository.UserRepository;
 @Service
 public class AuthorizationService implements UserDetailsService {
 	@Autowired
-	private ServiceUserDetailsService serviceUserDetailsService;
+	private CustomUserDetailsService customUserDetailsService;
 	
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		return serviceUserDetailsService.loadUserByUsername(username);
+		return customUserDetailsService.loadUserByUsername(username);
 	}
 
 }

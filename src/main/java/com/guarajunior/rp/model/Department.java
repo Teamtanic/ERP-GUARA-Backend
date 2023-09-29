@@ -26,8 +26,10 @@ public class Department {
 	private String name;
 	
 	@OneToMany(mappedBy = "department")
+	@JsonIgnore
 	private List<User> users;
 
 	@OneToMany(mappedBy = "department")
+	@JsonIgnore
 	private List<RoleDepartmentPrivilege> privileges; 
 }

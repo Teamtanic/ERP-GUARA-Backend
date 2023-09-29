@@ -14,6 +14,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.guarajunior.rp.repository.RoleDepartmentPrivilegeRepository;
 
 import jakarta.persistence.Column;
@@ -44,10 +45,12 @@ public class User {
 	
 	@ManyToOne
 	@JoinColumn(name = "id_department")
+	@JsonIgnore
 	private Department department;
 	
 	@ManyToOne
 	@JoinColumn(name = "id_role")
+	@JsonIgnore
 	private Role role;
 	
 	private UUID createdBy;

@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.guarajunior.rp.model.ProjectUserRelation.ProjectUserKey;
 
@@ -32,16 +33,19 @@ public class RoleDepartmentPrivilege {
     @ManyToOne
     @MapsId("roleId")
     @JoinColumn(name = "id_role")
+    @JsonIgnore
     private Role role;
 
     @ManyToOne
     @MapsId("departmentId")
     @JoinColumn(name = "id_department")
+    @JsonIgnore
     private Department department;
     
     @ManyToOne
     @MapsId("userPrivilegeId")
     @JoinColumn(name = "id_user_privilege")
+    @JsonIgnore
     private UserPrivilege userPrivilege;
 	
     @Data

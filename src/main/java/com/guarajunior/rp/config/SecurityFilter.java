@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.guarajunior.rp.repository.UserRepository;
-import com.guarajunior.rp.service.ServiceUserDetailsService;
+import com.guarajunior.rp.service.CustomUserDetailsService;
 import com.guarajunior.rp.service.TokenService;
 
 import jakarta.servlet.FilterChain;
@@ -23,7 +23,7 @@ public class SecurityFilter extends OncePerRequestFilter {
 	@Autowired
 	TokenService tokenService;
 	@Autowired
-	ServiceUserDetailsService serviceUserDetailsService;
+	CustomUserDetailsService customUserDetailsService;
 
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -32,7 +32,7 @@ public class SecurityFilter extends OncePerRequestFilter {
 		if(token != null) {
 			var login = tokenService.validateToken(token);
 			if(login != "") {
-				UserDetails user = serviceUserDetailsService.loadUserByUsername(login);
+				UserDetails user = customUserDetailsService.loadUserByUsername(login);
 				var authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
 				SecurityContextHolder.getContext().setAuthentication(authentication);	
 			}			
