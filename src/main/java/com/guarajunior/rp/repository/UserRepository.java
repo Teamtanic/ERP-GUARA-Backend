@@ -14,5 +14,5 @@ public interface UserRepository extends JpaRepository<User, UUID> {
 	@Query("SELECT u FROM User u WHERE u.active = true")
 	Page<User> findAll(Pageable pageable);
 	
-	UserDetails findByLogin(String login);
+	User findByLogin(String login);
 }

@@ -8,15 +8,20 @@ import java.util.Set;
 import java.util.UUID;
 
 import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.guarajunior.rp.repository.RoleDepartmentPrivilegeRepository;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinColumns;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Temporal;
@@ -25,9 +30,7 @@ import lombok.Data;
 
 @Data
 @Entity
-public class User implements UserDetails {
-	private static final long serialVersionUID = 1L;
-
+public class User {
 	@Id
 	@GeneratedValue(generator = "UUID")
 	private UUID id;
@@ -57,59 +60,9 @@ public class User implements UserDetails {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date updatedAt;
 	
-	@OneToMany(mappedBy = "user")
-    private List<ProjectUserRelation> projectUserRelations;
-	
 	@ManyToOne
 	@JoinColumn(name = "id_course")
 	private Course course;
 
-	@Override
-	public Collection<? extends GrantedAuthority> getAuthorities() {
-		Set<GrantedAuthority> authorities = new HashSet<>();
-
-		if (role != null) {
-			// Adiciona as autoridades com base nos privilegios relacionados à Role
-		    List<UserPrivilege> rolePrivileges = role.getPrivileges();
-		    for (UserPrivilege privilege : rolePrivileges) {
-		        authorities.add(new SimpleGrantedAuthority(privilege.getName()));
-		    }
-		}
-
-		if (department != null) {
-		    // Adiciona as autoridades com base nos privilegios relacionados ao Department
-		    List<UserPrivilege> departmentPrivileges = department.getPrivileges();
-		    for (UserPrivilege privilege : departmentPrivileges) {
-		        authorities.add(new SimpleGrantedAuthority(privilege.getName()));
-		    }
-		}
-
-	    return authorities;
-	}
-
-	@Override
-	public String getUsername() {
-		return login;
-	}
-
-	@Override
-	public boolean isAccountNonExpired() {
-		return true;
-	}
-
-	@Override
-	public boolean isAccountNonLocked() {
-		return true;
-	}
-
-	@Override
-	public boolean isCredentialsNonExpired() {
-		return true;
-	}
-
-	@Override
-	public boolean isEnabled() {
-		return true;
-	}
 }
 

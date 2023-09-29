@@ -3,6 +3,7 @@ package com.guarajunior.rp.model;
 import java.util.List;
 import java.util.UUID;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.Entity;
@@ -26,13 +27,7 @@ public class Department {
 	
 	@OneToMany(mappedBy = "department")
 	private List<User> users;
-	
-	@ManyToMany(fetch = FetchType.EAGER)
-	@JsonManagedReference
-	@JoinTable(
-	    name = "department_has_user_privilege",
-	    joinColumns = @JoinColumn(name = "id_department"),
-	    inverseJoinColumns = @JoinColumn(name = "id_user_privilege")
-	)
-	private List<UserPrivilege> privileges;
+
+	@OneToMany(mappedBy = "department")
+	private List<RoleDepartmentPrivilege> privileges; 
 }

@@ -27,12 +27,6 @@ public class Role {
 	@OneToMany(mappedBy = "role")
 	private List<User> users;
 	
-	@ManyToMany(fetch = FetchType.EAGER)
-	@JsonManagedReference
-	@JoinTable(
-	    name = "role_has_user_privilege",
-	    joinColumns = @JoinColumn(name = "id_role"),
-	    inverseJoinColumns = @JoinColumn(name = "id_user_privilege")
-	)
-	private List<UserPrivilege> privileges;
+	@OneToMany(mappedBy = "role")
+	private List<RoleDepartmentPrivilege> privileges; 
 }

@@ -5,6 +5,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authorization.AuthorityAuthorizationManager;
+import org.springframework.security.authorization.AuthorizationManagers;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -26,14 +28,15 @@ public class SecurityConfig {
 				.csrf(csrf -> csrf.disable())
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.authorizeHttpRequests(authorize -> authorize
+						
 						//user
 							//users
 							.requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
-							.requestMatchers(HttpMethod.POST, "/auth/registro").hasAuthority("canWriteUser")
-							.requestMatchers(HttpMethod.GET, "/usuarios").hasAnyAuthority("canViewUser", "canWriteUser")
+							.requestMatchers(HttpMethod.POST, "/auth/registro").permitAll()
+							.requestMatchers(HttpMethod.GET, "/usuarios").hasAuthority("RH")
 							.requestMatchers("/usuarios").hasAuthority("canWriteUser")
 							//course
-							.requestMatchers(HttpMethod.GET, "/cursos").hasAnyAuthority("canViewUser", "canWriteUser")
+							.requestMatchers(HttpMethod.GET, "/cursos").hasAnyAuthority("canView")
 							.requestMatchers("/cursos").hasAuthority("canWriteUser")
 							//departments
 							.requestMatchers(HttpMethod.GET, "/departamentos").hasAnyAuthority("canViewUser", "canWriteUser")

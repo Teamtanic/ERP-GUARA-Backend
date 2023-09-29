@@ -16,6 +16,7 @@ import com.guarajunior.rp.mapper.UserMapper;
 import com.guarajunior.rp.model.Course;
 import com.guarajunior.rp.model.Department;
 import com.guarajunior.rp.model.Role;
+import com.guarajunior.rp.model.RoleDepartmentPrivilege;
 import com.guarajunior.rp.model.User;
 import com.guarajunior.rp.model.dto.user.RegisterDTO;
 import com.guarajunior.rp.model.dto.user.UserDTO;
@@ -76,13 +77,13 @@ public class UserService {
 	    if(userDTO.getRoleId() != null) {
 			Role role = roleRepository.findById(userDTO.getRoleId())
 					.orElseThrow(() -> new EntityNotFoundException("Cargo não encontrado"));;
-					user.setRole(role);
+			user.setRole(role);
 		}
 		
 		if(userDTO.getDepartmentId() != null) {
 			Department department = departmentRepository.findById(userDTO.getDepartmentId())
 					.orElseThrow(() -> new EntityNotFoundException("Departamento não encontrado"));;
-					user.setDepartment(department);
+			user.setDepartment(department);
 		}
 		
 		userRepository.save(user);
@@ -110,14 +111,14 @@ public class UserService {
 			
 			if(registerDTO.getRoleId() != null) {
 				Role role = roleRepository.findById(registerDTO.getRoleId())
-						.orElseThrow(() -> new EntityNotFoundException("Cargo não encontrado"));;
-						userToCreate.setRole(role);
+						.orElseThrow(() -> new EntityNotFoundException("Cargo não encontrado"));
+				userToCreate.setRole(role);
 			}
 			
 			if(registerDTO.getDepartmentId() != null) {
 				Department department = departmentRepository.findById(registerDTO.getDepartmentId())
-						.orElseThrow(() -> new EntityNotFoundException("Departamento não encontrado"));;
-						userToCreate.setDepartment(department);
+						.orElseThrow(() -> new EntityNotFoundException("Departamento não encontrado"));
+				userToCreate.setDepartment(department);
 			}
 			
 			User createdUser = userRepository.save(userToCreate);
