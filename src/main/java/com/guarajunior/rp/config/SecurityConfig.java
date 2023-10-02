@@ -34,29 +34,29 @@ public class SecurityConfig {
 							.requestMatchers(HttpMethod.GET, "/usuarios").hasAuthority("RH")
 							.requestMatchers("/usuarios").hasAuthority("canWriteUser")
 							//course
-							.requestMatchers(HttpMethod.GET, "/cursos").hasAnyAuthority("canView")
+							.requestMatchers(HttpMethod.GET, "/cursos").hasAnyAuthority("RH")
 							.requestMatchers("/cursos").hasAuthority("canWriteUser")
 							//departments
-							.requestMatchers(HttpMethod.GET, "/departamentos").hasAnyAuthority("canViewUser", "canWriteUser")
+							.requestMatchers(HttpMethod.GET, "/departamentos").hasAnyAuthority("RH")
 							.requestMatchers("/departamentos").hasAuthority("canWriteUser")
 							//role
-							.requestMatchers(HttpMethod.GET, "/cargos").hasAnyAuthority("canViewUser", "canWriteUser")
+							.requestMatchers(HttpMethod.GET, "/cargos").hasAnyAuthority("RH")
 							.requestMatchers("/cargos").hasAuthority("canWriteUser")
 							//authority
-							.requestMatchers(HttpMethod.GET, "/autoridades").hasAnyAuthority("canViewUser", "canWriteUser")
+							.requestMatchers(HttpMethod.GET, "/autoridades").hasAnyAuthority("RH")
 							.requestMatchers("/autoridades").hasAuthority("canWriteUser")
 						//warehouse
-						.requestMatchers(HttpMethod.GET, "/produtos").hasAnyAuthority("canViewWarehouse", "canWriteWarehouse")
+						.requestMatchers(HttpMethod.GET, "/produtos").hasAnyAuthority("ALMOXARIFADO")
 						.requestMatchers("/produtos").hasAuthority("canWriteWarehouse")
 						//financial
 							//transaction
-							.requestMatchers(HttpMethod.GET, "/transacoes").hasAnyAuthority("canViewFinancial", "canWriteFinancial")
+							.requestMatchers(HttpMethod.GET, "/transacoes").hasAnyAuthority("FINANCEIRO")
 							.requestMatchers("/transacoes").hasAuthority("canWriteFinancial")
 							//account bank
-							.requestMatchers(HttpMethod.GET, "/bancos").hasAnyAuthority("canViewFinancial", "canWriteFinancial")
+							.requestMatchers(HttpMethod.GET, "/bancos").hasAnyAuthority("FINANCEIRO")
 							.requestMatchers("/bancos").hasAuthority("canWriteFinancial")
 						//company
-						.requestMatchers(HttpMethod.GET, "/empresas").hasAnyAuthority("canViewCompany", "canWriteCompany")
+						.requestMatchers(HttpMethod.GET, "/empresas").hasAnyAuthority("PROJETOS")
 						.requestMatchers("/empresas").hasAuthority("canWriteCompany")
 						//ADM
 						.requestMatchers(HttpMethod.GET, "/**").hasAuthority("admView")
