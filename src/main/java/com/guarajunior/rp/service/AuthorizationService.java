@@ -50,9 +50,6 @@ public class AuthorizationService implements UserDetailsService {
 	        for (UserPrivilege privilege : privileges) {
 	            authorities.add(new SimpleGrantedAuthority(privilege.getName()));
 	        }
-	        System.out.println("ROLE " + role.getId());
-	        System.out.println("DEPARTAMENTO " + department.getId());
-	        System.out.println("PRIVILEGIOS " + authorities);
         }
 
         UserDetails userDetails = new CustomUserDetails(
