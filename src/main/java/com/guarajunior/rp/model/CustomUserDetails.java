@@ -8,10 +8,14 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 @Data
+@EqualsAndHashCode(callSuper = true)
 @AllArgsConstructor
-public class CustomUserDetails implements UserDetails {
+@NoArgsConstructor
+public class CustomUserDetails extends User implements UserDetails {
     /**
 	 * 
 	 */

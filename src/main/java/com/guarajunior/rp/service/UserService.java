@@ -16,7 +16,6 @@ import com.guarajunior.rp.mapper.UserMapper;
 import com.guarajunior.rp.model.Course;
 import com.guarajunior.rp.model.Department;
 import com.guarajunior.rp.model.Role;
-import com.guarajunior.rp.model.RoleDepartmentPrivilege;
 import com.guarajunior.rp.model.User;
 import com.guarajunior.rp.model.dto.user.RegisterDTO;
 import com.guarajunior.rp.model.dto.user.UserDTO;

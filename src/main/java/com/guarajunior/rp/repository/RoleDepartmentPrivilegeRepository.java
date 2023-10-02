@@ -12,6 +12,10 @@ import com.guarajunior.rp.model.RoleDepartmentPrivilege;
 import com.guarajunior.rp.model.UserPrivilege;
 
 public interface RoleDepartmentPrivilegeRepository extends JpaRepository<RoleDepartmentPrivilege, RoleDepartmentPrivilege.RoleDepartmentPrivilegeKey> {
-	@Query("SELECT rdp FROM RoleDepartmentPrivilege rdp WHERE rdp.role = :role AND rdp.department = :department AND rdp.userPrivilege = :userPrivilege")
-	List<RoleDepartmentPrivilege> findRoleDepartmentPrivileges(@Param("role") Role idRole, @Param("department") Department department);
+	@Query("SELECT rdp.userPrivilege FROM RoleDepartmentPrivilege rdp " +
+	           "WHERE rdp.role = :role AND rdp.department = :department")
+	    List<UserPrivilege> findUserPrivilegesByRoleAndDepartment(
+	        @Param("role") Role role,
+	        @Param("department") Department department
+	    );
 }
