@@ -1,8 +1,8 @@
 package com.guarajunior.rp.model.dto.contact;
 
-import java.util.UUID;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.guarajunior.rp.model.Company;
+import com.guarajunior.rp.model.User;
 
 import lombok.Data;
 
@@ -12,5 +12,7 @@ public class ContactDTO {
     private String telephone;
     private String cell_phone;
     @JsonIgnore
-    private UUID idCompany;
+    private Company company;
+    @JsonIgnore
+    private User user;
 }

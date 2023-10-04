@@ -13,17 +13,25 @@ import org.springframework.stereotype.Service;
 import com.guarajunior.rp.exception.CompanyServiceException;
 import com.guarajunior.rp.exception.EntityNotFoundException;
 import com.guarajunior.rp.mapper.UserMapper;
+import com.guarajunior.rp.model.Contact;
 import com.guarajunior.rp.model.Course;
 import com.guarajunior.rp.model.Department;
+import com.guarajunior.rp.model.PasswordResetToken;
 import com.guarajunior.rp.model.Role;
 import com.guarajunior.rp.model.User;
+import com.guarajunior.rp.model.dto.contact.ContactDTO;
 import com.guarajunior.rp.model.dto.user.RegisterDTO;
+import com.guarajunior.rp.model.dto.user.ResetPasswordDTO;
 import com.guarajunior.rp.model.dto.user.UserDTO;
 import com.guarajunior.rp.model.dto.user.UserResponseDTO;
+import com.guarajunior.rp.repository.ContactRepository;
 import com.guarajunior.rp.repository.CourseRepository;
 import com.guarajunior.rp.repository.DepartmentRepository;
+import com.guarajunior.rp.repository.PasswordResetTokenRepository;
 import com.guarajunior.rp.repository.RoleRepository;
 import com.guarajunior.rp.repository.UserRepository;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 @Service
 public class UserService {
@@ -36,7 +44,15 @@ public class UserService {
 	@Autowired
 	private DepartmentRepository departmentRepository;
 	@Autowired
+	private ContactRepository contactRepository;
+	@Autowired
+	private PasswordResetTokenRepository passwordResetTokenRepository;
+	@Autowired
 	private UserMapper userMapper;
+	@Autowired 
+	private ContactService contactService;
+	@Autowired
+	private EmailService emailService;
 	
 	public Page<UserResponseDTO> getAllUsers(Integer page, Integer size){
 		Pageable pageable = PageRequest.of(page, size);
@@ -122,7 +138,18 @@ public class UserService {
 			
 			User createdUser = userRepository.save(userToCreate);
 			
-			return userMapper.toResponseDTO(createdUser);
+			// Cria o contato
+	        ContactDTO contactDTO = new ContactDTO();
+	        contactDTO.setEmail(registerDTO.getEmail());
+	        contactDTO.setTelephone(registerDTO.getTelephone());
+	        contactDTO.setCell_phone(registerDTO.getCell_phone());
+	        contactDTO.setUser(createdUser);
+	        contactService.createContact(contactDTO);
+			
+	        UserResponseDTO userResponseDTO = userMapper.toResponseDTO(createdUser);
+	        userResponseDTO.setContact(contactDTO);
+	        
+			return userResponseDTO;
 		} catch(Exception e) {
     		throw new CompanyServiceException("Erro ao criar usuario: " + e.getMessage());
     	}
@@ -137,4 +164,29 @@ public class UserService {
 		
 		userRepository.save(user);
 	}
+	
+	public void resetPasswordUser(ResetPasswordDTO userDTO, HttpServletRequest request) {
+		String email = userDTO.getEmail();
+		
+		Contact contact = contactRepository.findByEmail(email);
+		if (contact == null) {
+	        throw new EntityNotFoundException("Usuario não encontrada com o email: " + email);
+	    }
+		User user = userRepository.findByContact(contact);
+	    if (user == null) {
+	        throw new EntityNotFoundException("Usuario não encontrada com o email: " + email);
+	    }
+	    
+	    String token = UUID.randomUUID().toString();
+	    createPasswordResetTokenForUser(user, token);
+	    emailService.sendPasswordResetEmail(email, token, request);
+	}
+	
+	private void createPasswordResetTokenForUser(User user, String token) {
+	    PasswordResetToken myToken = new PasswordResetToken(token, user);
+	    passwordResetTokenRepository.save(myToken);
+	}
+	
+	
+	
 }

@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import com.guarajunior.rp.model.Contact;
 import com.guarajunior.rp.model.User;
 
 public interface UserRepository extends JpaRepository<User, UUID> {
@@ -14,4 +15,6 @@ public interface UserRepository extends JpaRepository<User, UUID> {
 	Page<User> findAll(Pageable pageable);
 	
 	User findByLogin(String login);
+	
+	User findByContact(Contact contact);
 }

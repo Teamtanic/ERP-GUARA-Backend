@@ -68,21 +68,6 @@ public class UserController {
 		}
 	}
 	
-	/*
-	@PostMapping
-	@Transactional
-	public ResponseEntity<?> register(@Valid @RequestBody UserDTO userDTO){
-		try {
-			UserResponseDTO createdUser = userService.createUser(userDTO);
-			
-			return ResponseEntity.status(HttpStatus.OK).body(createdUser);
-		} catch(CompanyServiceException  e) {
-			String errorMessage = "Erro ao criar usuario";
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse(500, errorMessage));
-		}
-	}
-	*/
-	
 	@DeleteMapping("/{id}")
 	public ResponseEntity<?> delete(@PathVariable UUID id){
 		try {
@@ -93,4 +78,7 @@ public class UserController {
 	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse(500, errorMessage));
 		}
 	}
+	
+
+	
 }

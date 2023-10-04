@@ -9,11 +9,9 @@ import com.guarajunior.rp.exception.CompanyServiceException;
 import com.guarajunior.rp.exception.EntityNotFoundException;
 import com.guarajunior.rp.mapper.CompanyMapper;
 import com.guarajunior.rp.mapper.CompanyRelationshipMapper;
-import com.guarajunior.rp.mapper.ContactMapper;
 
 import com.guarajunior.rp.model.Company;
 import com.guarajunior.rp.model.CompanyRelationship;
-import com.guarajunior.rp.model.Contact;
 import com.guarajunior.rp.model.dto.company.CompanyCreateDTO;
 import com.guarajunior.rp.model.dto.company.CompanyResponseDTO;
 import com.guarajunior.rp.model.dto.contact.ContactDTO;
@@ -21,7 +19,6 @@ import com.guarajunior.rp.model.dto.contact.ContactDTO;
 
 import com.guarajunior.rp.repository.CompanyRelationshipRepository;
 import com.guarajunior.rp.repository.CompanyRepository;
-import com.guarajunior.rp.repository.ContactRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -30,7 +27,6 @@ import org.springframework.data.domain.Pageable;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -45,13 +41,11 @@ public class CompanyService {
 	@Autowired
 	private CompanyRelationshipRepository companyRelationshipRepository;
 	@Autowired
-	private ContactRepository contactRepository;
-	@Autowired
 	private CompanyMapper companyMapper;
 	@Autowired
 	private CompanyRelationshipMapper companyRelationshipMapper;
 	@Autowired
-	private ContactMapper contactMapper;
+	private ContactService contactService;
 
 
     public Page<CompanyResponseDTO> getAllCompanies(Integer page, Integer size) {
@@ -120,28 +114,12 @@ public class CompanyService {
 	        contactDTO.setEmail(createCompanyDTO.getEmail());
 	        contactDTO.setTelephone(createCompanyDTO.getTelephone());
 	        contactDTO.setCell_phone(createCompanyDTO.getCell_phone());
-	        createContact(createdCompany.getId(), contactDTO);
+	        contactDTO.setCompany(createdCompany);
+	        contactService.createContact(contactDTO);
 	        
-	        responseCompany.setContact(Collections.singletonList(contactDTO));
-	        
-	        
+	        responseCompany.setContact(contactDTO);
+	      
 	        return responseCompany;
-    	} catch(Exception e) {
-    		throw new CompanyServiceException("Erro ao criar empresa: " + e.getMessage());
-    	}
-    }
-    
-    @Transactional
-    public void createContact(UUID companyId, ContactDTO contactCreateDTO) {
-    	try {
-    	companyRepository.findById(companyId)
-                .orElseThrow(() -> new EntityNotFoundException("Empresa não encontrada com o ID: " + companyId));
-    	
-    	contactCreateDTO.setIdCompany(companyId);
-    	
-        Contact newContact = contactMapper.toEntity(contactCreateDTO);
-
-        contactRepository.save(newContact);
     	} catch(Exception e) {
     		throw new CompanyServiceException("Erro ao criar empresa: " + e.getMessage());
     	}

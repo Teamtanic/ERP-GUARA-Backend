@@ -1,5 +1,6 @@
 package com.guarajunior.rp.model.dto.user;
 
+import com.guarajunior.rp.model.dto.contact.ContactDTO;
 import com.guarajunior.rp.model.dto.course.CourseResponseDTO;
 
 import lombok.Data;
@@ -10,4 +11,5 @@ public class UserResponseDTO {
 	private String prontuary;
 	private Boolean status;
 	private CourseResponseDTO course;
+	private ContactDTO contact;
 }

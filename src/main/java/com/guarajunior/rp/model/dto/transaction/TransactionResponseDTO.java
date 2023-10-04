@@ -10,7 +10,6 @@ import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.guarajunior.rp.enums.TransactionType;
 import com.guarajunior.rp.model.dto.bankaccount.BankAccountResponseDTO;
 import com.guarajunior.rp.model.dto.productwarehouse.ProductTransactionDTO;
-import com.guarajunior.rp.model.dto.productwarehouse.ProductWarehouseResponseDTO;
 import com.guarajunior.rp.model.dto.project.ProjectResponseDTO;
 
 import lombok.Data;

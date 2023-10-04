@@ -15,6 +15,6 @@ public class CompanyResponseDTO {
     private String cpf;
     private String cnpj;
     private List<CompanyRelationshipDTO> companyRelationships;
-    private List<ContactDTO> contact;
+    private ContactDTO contact;
 
 }

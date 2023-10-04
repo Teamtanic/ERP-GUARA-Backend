@@ -13,6 +13,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import lombok.Data;
@@ -54,6 +55,8 @@ public class User {
 	@ManyToOne
 	@JoinColumn(name = "id_course")
 	private Course course;
-
+	
+	@OneToOne(mappedBy = "user")
+	private Contact contact;
 }
 

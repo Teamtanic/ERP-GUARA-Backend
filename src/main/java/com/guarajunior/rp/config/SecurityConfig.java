@@ -31,6 +31,7 @@ public class SecurityConfig {
 							//users
 							.requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
 							.requestMatchers(HttpMethod.POST, "/auth/registro").permitAll()
+							.requestMatchers(HttpMethod.POST, "/auth/recuperar-senha").permitAll()
 							.requestMatchers(HttpMethod.GET, "/usuarios").hasAuthority("RH")
 							.requestMatchers("/usuarios").hasAuthority("canWriteUser")
 							//course

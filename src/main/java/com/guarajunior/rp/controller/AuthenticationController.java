@@ -10,15 +10,19 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.guarajunior.rp.exception.CompanyServiceException;
+import com.guarajunior.rp.model.ErrorResponse;
 import com.guarajunior.rp.model.User;
 import com.guarajunior.rp.model.dto.user.AuthenticationDTO;
 import com.guarajunior.rp.model.dto.user.LoginResponseDTO;
 import com.guarajunior.rp.model.dto.user.RegisterDTO;
+import com.guarajunior.rp.model.dto.user.ResetPasswordDTO;
 import com.guarajunior.rp.model.dto.user.UserResponseDTO;
 import com.guarajunior.rp.repository.UserRepository;
 import com.guarajunior.rp.service.TokenService;
 import com.guarajunior.rp.service.UserService;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 
 @RestController
@@ -50,5 +54,16 @@ public class AuthenticationController {
 		UserResponseDTO user = userService.createUser(registerDTO);
 		
 		return ResponseEntity.status(HttpStatus.OK).body(user);
+	}
+	
+	@PostMapping("/recuperar-senha")
+	public ResponseEntity<?> resetPassword(@RequestBody ResetPasswordDTO userDTO, HttpServletRequest request) {
+		try {
+			userService.resetPasswordUser(userDTO, request);
+			return ResponseEntity.status(HttpStatus.OK).build();
+		} catch(CompanyServiceException  e) {
+			String errorMessage = "Erro ao recuperar senha de usuario";
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse(500, errorMessage));
+		}
 	}
 }
