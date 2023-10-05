@@ -37,7 +37,6 @@ public class EmailService {
 	    // Adicione o contexto da aplicação à URL
 	    appUrl.append(contextPath);
 
-	    System.out.println(appUrl.toString());
 	    return appUrl.toString() + "/reset-password?token=" + token;
     }
 }

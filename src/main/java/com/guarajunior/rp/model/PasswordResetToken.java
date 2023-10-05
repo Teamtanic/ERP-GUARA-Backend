@@ -44,4 +44,16 @@ public class PasswordResetToken {
         calendar.add(Calendar.MINUTE, expiryMinutes);
         return calendar.getTime();
     }
+    
+    public Boolean isExpired() {
+    	Calendar now = Calendar.getInstance();
+    	now.setTime(new Date());
+        Calendar expiry = Calendar.getInstance();
+        expiry.setTime(expiryDate);
+        if(now.compareTo(expiry) < 0) {
+        	return false;
+        } else {
+        	return true;
+        }
+    }
 }

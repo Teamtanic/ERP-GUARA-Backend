@@ -21,7 +21,8 @@ import com.guarajunior.rp.model.Role;
 import com.guarajunior.rp.model.User;
 import com.guarajunior.rp.model.dto.contact.ContactDTO;
 import com.guarajunior.rp.model.dto.user.RegisterDTO;
-import com.guarajunior.rp.model.dto.user.ResetPasswordDTO;
+import com.guarajunior.rp.model.dto.user.ResetPasswordGetDTO;
+import com.guarajunior.rp.model.dto.user.ResetPasswordPostDTO;
 import com.guarajunior.rp.model.dto.user.UserDTO;
 import com.guarajunior.rp.model.dto.user.UserResponseDTO;
 import com.guarajunior.rp.repository.ContactRepository;
@@ -53,6 +54,8 @@ public class UserService {
 	private ContactService contactService;
 	@Autowired
 	private EmailService emailService;
+	@Autowired
+	private PasswordResetTokenService passwordResetTokenService;
 	
 	public Page<UserResponseDTO> getAllUsers(Integer page, Integer size){
 		Pageable pageable = PageRequest.of(page, size);
@@ -165,7 +168,7 @@ public class UserService {
 		userRepository.save(user);
 	}
 	
-	public void resetPasswordUser(ResetPasswordDTO userDTO, HttpServletRequest request) {
+	public void resetPasswordUser(ResetPasswordGetDTO userDTO, HttpServletRequest request) {
 		String email = userDTO.getEmail();
 		
 		Contact contact = contactRepository.findByEmail(email);
@@ -187,6 +190,17 @@ public class UserService {
 	    passwordResetTokenRepository.save(myToken);
 	}
 	
-	
+	public void resetPasswordWithToken(String token, ResetPasswordPostDTO passwordPostDTO) {
+        PasswordResetToken resetToken = passwordResetTokenService.validateToken(token);
+        
+        User user = resetToken.getUser();
+        String encryptedPassword = new BCryptPasswordEncoder().encode(passwordPostDTO.getPassword());
+        
+        user.setPassword(encryptedPassword);
+
+        userRepository.save(user);
+
+        passwordResetTokenRepository.delete(resetToken);
+    }
 	
 }

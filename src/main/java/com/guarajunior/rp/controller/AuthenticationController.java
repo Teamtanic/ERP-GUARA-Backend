@@ -8,15 +8,18 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.guarajunior.rp.exception.CompanyServiceException;
+import com.guarajunior.rp.exception.InvalidTokenException;
 import com.guarajunior.rp.model.ErrorResponse;
 import com.guarajunior.rp.model.User;
 import com.guarajunior.rp.model.dto.user.AuthenticationDTO;
 import com.guarajunior.rp.model.dto.user.LoginResponseDTO;
 import com.guarajunior.rp.model.dto.user.RegisterDTO;
-import com.guarajunior.rp.model.dto.user.ResetPasswordDTO;
+import com.guarajunior.rp.model.dto.user.ResetPasswordGetDTO;
+import com.guarajunior.rp.model.dto.user.ResetPasswordPostDTO;
 import com.guarajunior.rp.model.dto.user.UserResponseDTO;
 import com.guarajunior.rp.repository.UserRepository;
 import com.guarajunior.rp.service.TokenService;
@@ -57,7 +60,7 @@ public class AuthenticationController {
 	}
 	
 	@PostMapping("/recuperar-senha")
-	public ResponseEntity<?> resetPassword(@RequestBody ResetPasswordDTO userDTO, HttpServletRequest request) {
+	public ResponseEntity<?> resetPassword(@RequestBody ResetPasswordGetDTO userDTO, HttpServletRequest request) {
 		try {
 			userService.resetPasswordUser(userDTO, request);
 			return ResponseEntity.status(HttpStatus.OK).build();
@@ -66,4 +69,19 @@ public class AuthenticationController {
 	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse(500, errorMessage));
 		}
 	}
+	
+	@PostMapping("/reset-password")
+	 public ResponseEntity<?> resetPasswordWithToken(@RequestParam("token") String token, @RequestBody ResetPasswordPostDTO passwordPostDTO){
+		 try {
+	            userService.resetPasswordWithToken(token, passwordPostDTO);
+	            
+	            return ResponseEntity.status(HttpStatus.OK).body("Redefinição de senha bem-sucedida");
+	        } catch (InvalidTokenException e) {
+	            String errorMessage = "Token inválido ou expirado";
+	            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(400, errorMessage));
+	        } catch (Exception e) {
+	            String errorMessage = "Erro ao redefinir a senha";
+	            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse(500, errorMessage));
+	        }
+	 }
 }
