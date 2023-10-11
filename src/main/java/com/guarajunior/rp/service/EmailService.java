@@ -19,8 +19,28 @@ public class EmailService {
         mailMessage.setText("Use o seguinte link para redefinir sua senha: " + generateResetPasswordLink(token, request));
         javaMailSender.send(mailMessage);
     }
+    
+    public void sendCreateNewAccountEmail(String toEmail, String token, HttpServletRequest request) {
+        SimpleMailMessage mailMessage = new SimpleMailMessage();
+        mailMessage.setTo(toEmail);
+        mailMessage.setSubject("Crie uma nova conta");
+        mailMessage.setText("Use o seguinte link para criar sua conta: " + generateRegisterLink(token, request));
+        javaMailSender.send(mailMessage);
+    }
 
     private String generateResetPasswordLink(String token, HttpServletRequest request) {
+    	String appUrl = getAppUrl(request);
+
+	    return appUrl + "/reset-password?token=" + token;
+    }
+    
+    private String generateRegisterLink(String token, HttpServletRequest request) {
+    	String appUrl = getAppUrl(request);
+
+	    return appUrl + "/auth/registro?token=" + token;
+    }
+    
+    private String getAppUrl(HttpServletRequest request) {
     	String scheme = request.getScheme(); // "http" ou "https"
 	    String serverName = request.getServerName(); // nome do servidor (por exemplo, "localhost" ou "www.exemplo.com")
 	    int serverPort = request.getServerPort(); // porta do servidor (por exemplo, 80 ou 443 para HTTP/HTTPS)
@@ -36,7 +56,7 @@ public class EmailService {
 
 	    // Adicione o contexto da aplicação à URL
 	    appUrl.append(contextPath);
-
-	    return appUrl.toString() + "/reset-password?token=" + token;
+	    
+	    return appUrl.toString();
     }
 }

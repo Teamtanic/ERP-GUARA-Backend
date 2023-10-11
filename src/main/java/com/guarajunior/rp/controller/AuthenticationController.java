@@ -18,8 +18,8 @@ import com.guarajunior.rp.model.User;
 import com.guarajunior.rp.model.dto.user.AuthenticationDTO;
 import com.guarajunior.rp.model.dto.user.LoginResponseDTO;
 import com.guarajunior.rp.model.dto.user.RegisterDTO;
-import com.guarajunior.rp.model.dto.user.ResetPasswordGetDTO;
-import com.guarajunior.rp.model.dto.user.ResetPasswordPostDTO;
+import com.guarajunior.rp.model.dto.user.UserEmailDTO;
+import com.guarajunior.rp.model.dto.user.UserPasswordDTO;
 import com.guarajunior.rp.model.dto.user.UserResponseDTO;
 import com.guarajunior.rp.repository.UserRepository;
 import com.guarajunior.rp.service.TokenService;
@@ -43,26 +43,40 @@ public class AuthenticationController {
 	@PostMapping("/login")
 	public ResponseEntity<?> login(@RequestBody @Valid AuthenticationDTO authenticationDTO) {
 		var usernamePassword = new UsernamePasswordAuthenticationToken(authenticationDTO.getLogin(), authenticationDTO.getPassword());
-		var auth = this.authenticationManager.authenticate(usernamePassword);
-		
-		var token = tokenService.generateToken((User) auth.getPrincipal());
-		
-		return ResponseEntity.status(HttpStatus.OK).body(new LoginResponseDTO(token));
+		try {
+			var auth = this.authenticationManager.authenticate(usernamePassword);
+			var token = tokenService.generateToken((User) auth.getPrincipal());
+			
+			return ResponseEntity.status(HttpStatus.OK).body(new LoginResponseDTO(token));
+		} catch (CompanyServiceException e) {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorResponse(401, e.getMessage()));
+		}
 	}
 	
 	@PostMapping("/registro")
-	public ResponseEntity<?> register(@RequestBody @Valid RegisterDTO registerDTO){
-		if(userRepository.findByLogin(registerDTO.getLogin()) != null) return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-		
-		UserResponseDTO user = userService.createUser(registerDTO);
-		
-		return ResponseEntity.status(HttpStatus.OK).body(user);
+	public ResponseEntity<?> register(@RequestParam("token") String token, @RequestBody @Valid RegisterDTO registerDTO){
+		try {
+			
+			if (token == null || token.isEmpty()) {
+				if(userRepository.findByLogin(registerDTO.getLogin()) != null) return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();			 
+				UserResponseDTO user = userService.createUser(registerDTO);
+				return ResponseEntity.status(HttpStatus.OK).body(user);	
+			} else {
+				if(userRepository.findByLogin(registerDTO.getLogin()) != null)  return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+				UserResponseDTO user = userService.userCreateNewAccount(registerDTO, token);
+				return ResponseEntity.status(HttpStatus.OK).body(user);	
+			}
+			
+		} catch (Exception e) {
+			String errorMessage = "Erro ao recuperar criar usuario";
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse(500, errorMessage));
+		}
 	}
 	
 	@PostMapping("/recuperar-senha")
-	public ResponseEntity<?> resetPassword(@RequestBody ResetPasswordGetDTO userDTO, HttpServletRequest request) {
+	public ResponseEntity<?> resetPassword(@RequestParam("token") String token, @RequestBody UserEmailDTO userDTO, HttpServletRequest request) {
 		try {
-			userService.resetPasswordUser(userDTO, request);
+			userService.resetPasswordUserRequest(userDTO, request);
 			return ResponseEntity.status(HttpStatus.OK).build();
 		} catch(CompanyServiceException  e) {
 			String errorMessage = "Erro ao recuperar senha de usuario";
@@ -71,7 +85,7 @@ public class AuthenticationController {
 	}
 	
 	@PostMapping("/reset-password")
-	 public ResponseEntity<?> resetPasswordWithToken(@RequestParam("token") String token, @RequestBody ResetPasswordPostDTO passwordPostDTO){
+	 public ResponseEntity<?> resetPasswordWithToken(@RequestParam("token") String token, @RequestBody UserPasswordDTO passwordPostDTO){
 		 try {
 	            userService.resetPasswordWithToken(token, passwordPostDTO);
 	            
