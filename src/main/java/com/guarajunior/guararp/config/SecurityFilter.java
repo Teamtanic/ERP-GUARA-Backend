@@ -1,7 +1,7 @@
 package com.guarajunior.guararp.config;
 
-import com.guarajunior.guararp.service.AuthorizationService;
-import com.guarajunior.guararp.service.TokenService;
+import com.guarajunior.guararp.domain.service.AuthorizationService;
+import com.guarajunior.guararp.domain.service.TokenService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
