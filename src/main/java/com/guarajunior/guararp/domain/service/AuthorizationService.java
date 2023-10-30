@@ -1,7 +1,6 @@
 package com.guarajunior.guararp.domain.service;
 
 import com.guarajunior.guararp.infra.model.*;
-import com.guarajunior.guararp.infra.model.*;
 import com.guarajunior.guararp.infra.repository.RoleDepartmentPrivilegeRepository;
 import com.guarajunior.guararp.infra.repository.UserRepository;
 import jakarta.transaction.Transactional;
@@ -47,7 +46,7 @@ public class AuthorizationService implements UserDetailsService {
 	        }
         }
 
-        UserDetails userDetails = new CustomUserDetails(
+        return new CustomUserDetails(
         		user.getId(),
                 user.getLogin(),
                 user.getPassword(),
@@ -55,8 +54,6 @@ public class AuthorizationService implements UserDetailsService {
                 user.getStatus(),
                 authorities
             );
-
-        return userDetails;
     }
 
 }

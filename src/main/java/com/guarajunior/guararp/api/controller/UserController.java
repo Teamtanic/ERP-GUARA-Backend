@@ -1,7 +1,7 @@
 package com.guarajunior.guararp.api.controller;
 
 import com.guarajunior.guararp.api.error.exception.CompanyServiceException;
-import com.guarajunior.guararp.infra.model.ErrorResponse;
+import com.guarajunior.guararp.api.error.ErrorResponse;
 import com.guarajunior.guararp.api.dto.user.request.UserUpdateRequest;
 import com.guarajunior.guararp.api.dto.user.request.UserEmailRequest;
 import com.guarajunior.guararp.api.dto.user.response.UserResponse;
@@ -32,7 +32,7 @@ public class UserController {
 			return ResponseEntity.status(HttpStatus.OK).body(users);
 		} catch(CompanyServiceException  e) {
 			String errorMessage = "Erro ao listar usuarios";
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse(500, errorMessage));
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrorResponse.builder().status(HttpStatus.INTERNAL_SERVER_ERROR).message(errorMessage).build());
 		}
 	}
 	
@@ -44,7 +44,7 @@ public class UserController {
 			return ResponseEntity.status(HttpStatus.OK).body(user);
 		} catch(CompanyServiceException  e) {
 			String errorMessage = "Erro ao resgatar usuario";
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse(500, errorMessage));
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrorResponse.builder().status(HttpStatus.INTERNAL_SERVER_ERROR).message(errorMessage).build());
 		}
 	}
 	
@@ -57,7 +57,7 @@ public class UserController {
 			return ResponseEntity.status(HttpStatus.OK).body(updatedUser);
 		} catch(CompanyServiceException  e) {
 			String errorMessage = "Erro ao atualizar usuario";
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse(500, errorMessage));
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrorResponse.builder().status(HttpStatus.INTERNAL_SERVER_ERROR).message(errorMessage).build());
 		}
 	}
 	
@@ -69,7 +69,7 @@ public class UserController {
 			return ResponseEntity.status(HttpStatus.OK).build();
 		} catch(CompanyServiceException e) {
 			String errorMessage = "Erro ao gerar token para criação de usuário";
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse(500, errorMessage));
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrorResponse.builder().status(HttpStatus.INTERNAL_SERVER_ERROR).message(errorMessage).build());
 		}
 	}
 	
@@ -80,7 +80,7 @@ public class UserController {
 			return ResponseEntity.status(HttpStatus.OK).build();
 		} catch(CompanyServiceException  e) {
 			String errorMessage = "Erro ao deletar usuario";
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse(500, errorMessage));
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrorResponse.builder().status(HttpStatus.INTERNAL_SERVER_ERROR).message(errorMessage).build());
 		}
 	}
 	

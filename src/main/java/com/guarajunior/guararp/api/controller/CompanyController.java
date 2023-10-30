@@ -1,7 +1,7 @@
 package com.guarajunior.guararp.api.controller;
 
 import com.guarajunior.guararp.api.error.exception.CompanyServiceException;
-import com.guarajunior.guararp.infra.model.ErrorResponse;
+import com.guarajunior.guararp.api.error.ErrorResponse;
 import com.guarajunior.guararp.api.dto.company.request.CompanyCreateRequest;
 import com.guarajunior.guararp.api.dto.company.response.CompanyResponse;
 import com.guarajunior.guararp.domain.service.CompanyService;
@@ -42,7 +42,7 @@ public class CompanyController {
 		} catch(CompanyServiceException  e) {
 			String errorMessage = "Erro ao listar clientes";
 			//String errorLogMessage = errorMessage + ": " + e.getMessage();
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse(500, errorMessage));
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrorResponse.builder().status(HttpStatus.INTERNAL_SERVER_ERROR).message(errorMessage).build());
 		}
 	}
 	
@@ -55,7 +55,7 @@ public class CompanyController {
 		} catch(CompanyServiceException e) {
 			String errorMessage = "Erro ao resgatar dados do cliente";
 			//String errorLogMessage = errorMessage + ": " + e.getMessage();
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse(500, errorMessage));
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrorResponse.builder().status(HttpStatus.INTERNAL_SERVER_ERROR).message(errorMessage).build());
 		}
     }
 	
@@ -70,7 +70,7 @@ public class CompanyController {
 		} catch (CompanyServiceException e) {
 			String errorMessage = "Erro ao salvar empresa";
 			// String errorLogMessage = "Erro ao salvar empresa: " + e.getMessage()";
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse(500, errorMessage));
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrorResponse.builder().status(HttpStatus.INTERNAL_SERVER_ERROR).message(errorMessage).build());
 		}
 	}
 	
@@ -85,7 +85,7 @@ public class CompanyController {
 		} catch (CompanyServiceException e) {
 			String errorMessage = "Erro ao salvar empresa";
 			// String errorLogMessage = "Erro ao salvar empresa: " + e.getMessage()";
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse(500, errorMessage));
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrorResponse.builder().status(HttpStatus.INTERNAL_SERVER_ERROR).message(errorMessage).build());
 		}
 	}
 	
@@ -97,7 +97,7 @@ public class CompanyController {
 		} catch (CompanyServiceException e) {
 			String errorMessage = "Erro ao deletar cliente";
 			// String errorLogMessage = "Erro ao salvar empresa: " + e.getMessage()";
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse(500, errorMessage));
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrorResponse.builder().status(HttpStatus.INTERNAL_SERVER_ERROR).message(errorMessage).build());
 		}
 	}
 	
@@ -109,7 +109,7 @@ public class CompanyController {
 		} catch (CompanyServiceException e) {
 			String errorMessage = "Erro ao deletar cliente";
 			// String errorLogMessage = "Erro ao salvar empresa: " + e.getMessage()";
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse(500, errorMessage));
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrorResponse.builder().status(HttpStatus.INTERNAL_SERVER_ERROR).message(errorMessage).build());
 		}
 	}
 }

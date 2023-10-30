@@ -1,7 +1,7 @@
 package com.guarajunior.guararp.api.controller;
 
 import com.guarajunior.guararp.api.error.exception.CompanyServiceException;
-import com.guarajunior.guararp.infra.model.ErrorResponse;
+import com.guarajunior.guararp.api.error.ErrorResponse;
 import com.guarajunior.guararp.api.dto.project.request.ProjectCreateRequest;
 import com.guarajunior.guararp.api.dto.project.response.ProjectResponse;
 import com.guarajunior.guararp.domain.service.ProjectService;
@@ -31,7 +31,7 @@ public class ProjectController {
 			return ResponseEntity.status(HttpStatus.OK).body(projects);
 		} catch(CompanyServiceException  e) {
 			String errorMessage = "Erro ao listar projetos";
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse(500, errorMessage));
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrorResponse.builder().status(HttpStatus.INTERNAL_SERVER_ERROR).message(errorMessage).build());
 		}
 	}
 	
@@ -43,7 +43,7 @@ public class ProjectController {
 			return ResponseEntity.status(HttpStatus.OK).body(project);
 		} catch(CompanyServiceException  e) {
 			String errorMessage = "Erro ao resgatar projeto";
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse(500, errorMessage));
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrorResponse.builder().status(HttpStatus.INTERNAL_SERVER_ERROR).message(errorMessage).build());
 		}
 	}
 	
@@ -56,7 +56,7 @@ public class ProjectController {
 			return ResponseEntity.status(HttpStatus.OK).body(updatedProject);
 		} catch(CompanyServiceException  e) {
 			String errorMessage = "Erro ao atualizar projetos";
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse(500, errorMessage));
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrorResponse.builder().status(HttpStatus.INTERNAL_SERVER_ERROR).message(errorMessage).build());
 		}
 	}
 	
@@ -69,7 +69,7 @@ public class ProjectController {
 			return ResponseEntity.status(HttpStatus.CREATED).body(createdProject);
 		} catch(CompanyServiceException  e) {
 			String errorMessage = "Erro ao criar projeto";
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse(500, errorMessage));
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrorResponse.builder().status(HttpStatus.INTERNAL_SERVER_ERROR).message(errorMessage).build());
 		}
 	}
 	
@@ -80,7 +80,7 @@ public class ProjectController {
 			return ResponseEntity.status(HttpStatus.OK).build();
 		} catch(CompanyServiceException  e) {
 			String errorMessage = "Erro ao deletar projeto";
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse(500, errorMessage));
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrorResponse.builder().status(HttpStatus.INTERNAL_SERVER_ERROR).message(errorMessage).build());
 		}
 	}
 }

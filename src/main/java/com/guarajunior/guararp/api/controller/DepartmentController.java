@@ -1,7 +1,7 @@
 package com.guarajunior.guararp.api.controller;
 
 import com.guarajunior.guararp.api.error.exception.CompanyServiceException;
-import com.guarajunior.guararp.infra.model.ErrorResponse;
+import com.guarajunior.guararp.api.error.ErrorResponse;
 import com.guarajunior.guararp.api.dto.department.request.DepartmentCreateRequest;
 import com.guarajunior.guararp.api.dto.department.response.DepartmentResponse;
 import com.guarajunior.guararp.domain.service.DepartmentService;
@@ -31,7 +31,7 @@ public class DepartmentController {
 			return ResponseEntity.status(HttpStatus.OK).body(departments);
 		} catch(CompanyServiceException  e) {
 			String errorMessage = "Erro ao listar departamentos";
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse(500, errorMessage));
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrorResponse.builder().status(HttpStatus.INTERNAL_SERVER_ERROR).message(errorMessage).build());
 		}
 	}
 	
@@ -43,7 +43,7 @@ public class DepartmentController {
 			return ResponseEntity.status(HttpStatus.OK).body(department);
 		} catch(CompanyServiceException  e) {
 			String errorMessage = "Erro ao resgatar departamento";
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse(500, errorMessage));
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrorResponse.builder().status(HttpStatus.INTERNAL_SERVER_ERROR).message(errorMessage).build());
 		}
 	}
 	
@@ -56,7 +56,7 @@ public class DepartmentController {
 			return ResponseEntity.status(HttpStatus.OK).body(updatedDepartment);
 		} catch(CompanyServiceException  e) {
 			String errorMessage = "Erro ao atualizar departamento";
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse(500, errorMessage));
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrorResponse.builder().status(HttpStatus.INTERNAL_SERVER_ERROR).message(errorMessage).build());
 		}
 	}
 	
@@ -69,7 +69,7 @@ public class DepartmentController {
 			return ResponseEntity.status(HttpStatus.CREATED).body(createdDepartment);
 		} catch(CompanyServiceException  e) {
 			String errorMessage = "Erro ao criar departamento";
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse(500, errorMessage));
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrorResponse.builder().status(HttpStatus.INTERNAL_SERVER_ERROR).message(errorMessage).build());
 		}
 	}
 	
@@ -80,7 +80,7 @@ public class DepartmentController {
 			return ResponseEntity.status(HttpStatus.OK).build();
 		} catch(CompanyServiceException  e) {
 			String errorMessage = "Erro ao deletar departamento";
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse(500, errorMessage));
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrorResponse.builder().status(HttpStatus.INTERNAL_SERVER_ERROR).message(errorMessage).build());
 		}
 	}
 }

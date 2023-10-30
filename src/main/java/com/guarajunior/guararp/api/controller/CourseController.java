@@ -2,7 +2,7 @@ package com.guarajunior.guararp.api.controller;
 
 
 import com.guarajunior.guararp.api.error.exception.CompanyServiceException;
-import com.guarajunior.guararp.infra.model.ErrorResponse;
+import com.guarajunior.guararp.api.error.ErrorResponse;
 import com.guarajunior.guararp.api.dto.course.request.CourseCreateRequest;
 import com.guarajunior.guararp.api.dto.course.response.CourseResponse;
 import com.guarajunior.guararp.domain.service.CourseService;
@@ -31,7 +31,7 @@ public class CourseController {
 			return ResponseEntity.status(HttpStatus.OK).body(courses);
 		} catch(CompanyServiceException  e) {
 			String errorMessage = "Erro ao listar cursos";
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse(500, errorMessage));
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrorResponse.builder().status(HttpStatus.INTERNAL_SERVER_ERROR).message(errorMessage).build());
 		}
 	}
 	
@@ -43,7 +43,7 @@ public class CourseController {
 			return ResponseEntity.status(HttpStatus.OK).body(course);
 		} catch(CompanyServiceException  e) {
 			String errorMessage = "Erro ao resgatar curso";
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse(500, errorMessage));
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrorResponse.builder().status(HttpStatus.INTERNAL_SERVER_ERROR).message(errorMessage).build());
 		}
 	}
 	
@@ -56,7 +56,7 @@ public class CourseController {
 			return ResponseEntity.status(HttpStatus.OK).body(updatedCourse);
 		} catch(CompanyServiceException  e) {
 			String errorMessage = "Erro ao atualizar curso";
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse(500, errorMessage));
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrorResponse.builder().status(HttpStatus.INTERNAL_SERVER_ERROR).message(errorMessage).build());
 		}
 	}
 	
@@ -69,7 +69,7 @@ public class CourseController {
 			return ResponseEntity.status(HttpStatus.CREATED).body(createdCourse);
 		} catch(CompanyServiceException  e) {
 			String errorMessage = "Erro ao criar curso";
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse(500, errorMessage));
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrorResponse.builder().status(HttpStatus.INTERNAL_SERVER_ERROR).message(errorMessage).build());
 		}
 	}
 	
@@ -80,7 +80,7 @@ public class CourseController {
 			return ResponseEntity.status(HttpStatus.OK).build();
 		} catch(CompanyServiceException  e) {
 			String errorMessage = "Erro ao deletar curso";
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse(500, errorMessage));
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrorResponse.builder().status(HttpStatus.INTERNAL_SERVER_ERROR).message(errorMessage).build());
 		}
 	}
 }

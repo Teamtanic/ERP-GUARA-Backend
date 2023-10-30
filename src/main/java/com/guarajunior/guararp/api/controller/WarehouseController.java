@@ -1,7 +1,7 @@
 package com.guarajunior.guararp.api.controller;
 
 import com.guarajunior.guararp.api.error.exception.CompanyServiceException;
-import com.guarajunior.guararp.infra.model.ErrorResponse;
+import com.guarajunior.guararp.api.error.ErrorResponse;
 import com.guarajunior.guararp.api.dto.productwarehouse.request.ProductWarehouseCreateRequest;
 import com.guarajunior.guararp.api.dto.productwarehouse.response.ProductWarehouseResponse;
 import com.guarajunior.guararp.domain.service.WarehouseService;
@@ -37,7 +37,7 @@ public class WarehouseController {
 			
 			return ResponseEntity
 					.status(HttpStatus.INTERNAL_SERVER_ERROR)
-					.body(new ErrorResponse(500, errorMessage));
+					.body(ErrorResponse.builder().status(HttpStatus.INTERNAL_SERVER_ERROR).message(errorMessage).build());
 		}
 	}
 	
@@ -49,7 +49,7 @@ public class WarehouseController {
 			return ResponseEntity.status(HttpStatus.OK).body(product);
 		} catch(CompanyServiceException  e) {
 			String errorMessage = "Erro ao resgatar produto";
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse(500, errorMessage));
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrorResponse.builder().status(HttpStatus.INTERNAL_SERVER_ERROR).message(errorMessage).build());
 		}
 	}
 	
@@ -62,7 +62,7 @@ public class WarehouseController {
 		} catch (CompanyServiceException e) {
 			String errorMessage = "Erro ao criar produto";
 			// String errorLogMessage = "Erro ao salvar empresa: " + e.getMessage()";
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse(500, errorMessage));
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrorResponse.builder().status(HttpStatus.INTERNAL_SERVER_ERROR).message(errorMessage).build());
 		}
 	}
 	
@@ -76,7 +76,7 @@ public class WarehouseController {
 		} catch (Exception e) {
 			String errorMessage = "Erro ao atualizar produto";
 			// String errorLogMessage = "Erro ao salvar empresa: " + e.getMessage()";
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse(500, errorMessage));
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrorResponse.builder().status(HttpStatus.INTERNAL_SERVER_ERROR).message(errorMessage).build());
 		}
 	}
 	
@@ -87,7 +87,7 @@ public class WarehouseController {
 			return ResponseEntity.status(HttpStatus.OK).build();
 		} catch(CompanyServiceException  e) {
 			String errorMessage = "Erro ao deletar cargo";
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse(500, errorMessage));
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrorResponse.builder().status(HttpStatus.INTERNAL_SERVER_ERROR).message(errorMessage).build());
 		}
 	}
 }

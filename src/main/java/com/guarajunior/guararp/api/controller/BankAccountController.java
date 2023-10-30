@@ -1,6 +1,6 @@
 package com.guarajunior.guararp.api.controller;
 
-import com.guarajunior.guararp.infra.model.ErrorResponse;
+import com.guarajunior.guararp.api.error.ErrorResponse;
 import com.guarajunior.guararp.api.dto.bankaccount.request.BankAccountCreateRequest;
 import com.guarajunior.guararp.api.dto.bankaccount.response.BankAccountResponse;
 import com.guarajunior.guararp.domain.service.BankAccountService;
@@ -30,7 +30,7 @@ public class BankAccountController {
 			return ResponseEntity.status(HttpStatus.OK).body(bankAccounts);
 		} catch (Exception e) {
 			String errorMessage = "Erro ao listar contas de bancos";
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse(500, errorMessage));
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrorResponse.builder().status(HttpStatus.INTERNAL_SERVER_ERROR).message(errorMessage).build());
 		}
 	}
 	
@@ -42,7 +42,7 @@ public class BankAccountController {
 			return ResponseEntity.status(HttpStatus.OK).body(createdBankAccount);
 		} catch (Exception e) {
 			String errorMessage = "Erro ao criar conta de banco";
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse(500, errorMessage));
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrorResponse.builder().status(HttpStatus.INTERNAL_SERVER_ERROR).message(errorMessage).build());
 		}
 	}
 	
@@ -54,7 +54,7 @@ public class BankAccountController {
 			return ResponseEntity.status(HttpStatus.OK).body(bankAccounts);
 		} catch (Exception e) {
 			String errorMessage = "Erro ao listar contas de bancos";
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse(500, errorMessage));
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrorResponse.builder().status(HttpStatus.INTERNAL_SERVER_ERROR).message(errorMessage).build());
 		}
 	}
 	
@@ -67,7 +67,7 @@ public class BankAccountController {
 			return ResponseEntity.status(HttpStatus.OK).body(updatedBankAccount);
 		} catch (Exception e) {
 			String errorMessage = "Erro ao editar conta de banco";
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse(500, errorMessage));
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrorResponse.builder().status(HttpStatus.INTERNAL_SERVER_ERROR).message(errorMessage).build());
 		}
 	}
 	
@@ -78,7 +78,7 @@ public class BankAccountController {
 			return ResponseEntity.status(HttpStatus.OK).build();
 		} catch (Exception e) {
 			String errorMessage = "Erro ao excluir conta de banco";
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse(500, errorMessage));
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrorResponse.builder().status(HttpStatus.INTERNAL_SERVER_ERROR).message(errorMessage).build());
 		}
 	}
 }

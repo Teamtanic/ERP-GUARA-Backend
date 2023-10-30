@@ -1,7 +1,7 @@
 package com.guarajunior.guararp.api.controller;
 
 import com.guarajunior.guararp.api.error.exception.CompanyServiceException;
-import com.guarajunior.guararp.infra.model.ErrorResponse;
+import com.guarajunior.guararp.api.error.ErrorResponse;
 import com.guarajunior.guararp.api.dto.transaction.request.TransactionCreateRequest;
 import com.guarajunior.guararp.api.dto.transaction.response.TransactionResponse;
 import com.guarajunior.guararp.domain.service.TransactionService;
@@ -31,7 +31,7 @@ public class TransactionController {
 		} catch(Exception e) {
 			String errorMessage = "Erro ao listar transações";
 			
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse(500, errorMessage));
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrorResponse.builder().status(HttpStatus.INTERNAL_SERVER_ERROR).message(errorMessage).build());
 		}
 	}
 	
@@ -45,7 +45,7 @@ public class TransactionController {
 		} catch (CompanyServiceException e) {
 			String errorMessage = "Erro ao salvar empresa";
 			// String errorLogMessage = "Erro ao salvar empresa: " + e.getMessage()";
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse(500, errorMessage));
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrorResponse.builder().status(HttpStatus.INTERNAL_SERVER_ERROR).message(errorMessage).build());
 		}
 	}
 	
@@ -57,7 +57,7 @@ public class TransactionController {
 			return ResponseEntity.status(HttpStatus.OK).body(transaction);
 		} catch (Exception e) {
 			String errorMessage = "Erro ao resgatar dados de transação";
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse(500, errorMessage));
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrorResponse.builder().status(HttpStatus.INTERNAL_SERVER_ERROR).message(errorMessage).build());
 		}
 	}
 	

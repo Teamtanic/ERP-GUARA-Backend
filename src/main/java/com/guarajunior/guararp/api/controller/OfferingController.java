@@ -1,6 +1,6 @@
 package com.guarajunior.guararp.api.controller;
 
-import com.guarajunior.guararp.infra.model.ErrorResponse;
+import com.guarajunior.guararp.api.error.ErrorResponse;
 import com.guarajunior.guararp.api.dto.offering.request.OfferingCreateRequest;
 import com.guarajunior.guararp.api.dto.offering.response.OfferingResponse;
 import com.guarajunior.guararp.domain.service.OfferingService;
@@ -39,7 +39,7 @@ public class OfferingController {
 			return ResponseEntity.status(HttpStatus.OK).body(offerings);
 		} catch (Exception e) {
 			String errorMessage = "Erro ao listar ofertas";
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse(500, errorMessage));
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrorResponse.builder().status(HttpStatus.INTERNAL_SERVER_ERROR).message(errorMessage).build());
 		}
 	}
 	
@@ -51,7 +51,7 @@ public class OfferingController {
 			return ResponseEntity.status(HttpStatus.OK).body(offering);
 		} catch (Exception e) {
 			String errorMessage = "Erro ao resgatar oferta";
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse(500, errorMessage));
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrorResponse.builder().status(HttpStatus.INTERNAL_SERVER_ERROR).message(errorMessage).build());
 		}
 	}
 	
@@ -64,7 +64,7 @@ public class OfferingController {
 			return ResponseEntity.status(HttpStatus.OK).body(offering);
 		} catch (Exception e) {
 			String errorMessage = "Erro ao atualizar oferta";
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse(500, errorMessage));
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrorResponse.builder().status(HttpStatus.INTERNAL_SERVER_ERROR).message(errorMessage).build());
 		}
 	}
 	
@@ -77,7 +77,7 @@ public class OfferingController {
 			return ResponseEntity.status(HttpStatus.OK).body(createdOffering);
 		} catch (Exception e) {
 			String errorMessage = "Erro ao criar oferta";
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse(500, errorMessage));
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrorResponse.builder().status(HttpStatus.INTERNAL_SERVER_ERROR).message(errorMessage).build());
 		}
 	}
 	
@@ -89,7 +89,7 @@ public class OfferingController {
 			return ResponseEntity.status(HttpStatus.OK).build();
 		} catch (Exception e) {
 			String errorMessage = "Erro ao deletar oferta";
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse(500, errorMessage));
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrorResponse.builder().status(HttpStatus.INTERNAL_SERVER_ERROR).message(errorMessage).build());
 		}
 	}
 }

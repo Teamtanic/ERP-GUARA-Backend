@@ -8,7 +8,7 @@ import com.guarajunior.guararp.api.dto.user.response.UserAuthenticationResponse;
 import com.guarajunior.guararp.api.dto.user.response.UserResponse;
 import com.guarajunior.guararp.api.error.exception.CompanyServiceException;
 import com.guarajunior.guararp.api.error.exception.InvalidTokenException;
-import com.guarajunior.guararp.infra.model.ErrorResponse;
+import com.guarajunior.guararp.api.error.ErrorResponse;
 import com.guarajunior.guararp.infra.model.User;
 import com.guarajunior.guararp.infra.repository.UserRepository;
 import com.guarajunior.guararp.domain.service.TokenService;
@@ -43,7 +43,7 @@ public class AuthenticationController {
 			
 			return ResponseEntity.status(HttpStatus.OK).body(new UserAuthenticationResponse(token));
 		} catch (CompanyServiceException e) {
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorResponse(401, e.getMessage()));
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ErrorResponse.builder().status(HttpStatus.UNAUTHORIZED).message(e.getMessage()).build());
 		}
 	}
 	
@@ -63,7 +63,7 @@ public class AuthenticationController {
 			
 		} catch (Exception e) {
 			String errorMessage = "Erro ao recuperar criar usuario";
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse(500, errorMessage));
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrorResponse.builder().status(HttpStatus.INTERNAL_SERVER_ERROR).message(errorMessage).build());
 		}
 	}
 	
@@ -74,7 +74,7 @@ public class AuthenticationController {
 			return ResponseEntity.status(HttpStatus.OK).build();
 		} catch(CompanyServiceException  e) {
 			String errorMessage = "Erro ao recuperar senha de usuario";
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse(500, errorMessage));
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrorResponse.builder().status(HttpStatus.INTERNAL_SERVER_ERROR).message(errorMessage).build());
 		}
 	}
 	
@@ -86,10 +86,10 @@ public class AuthenticationController {
 	            return ResponseEntity.status(HttpStatus.OK).body("Redefinição de senha bem-sucedida");
 	        } catch (InvalidTokenException e) {
 	            String errorMessage = "Token inválido ou expirado";
-	            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(400, errorMessage));
+	            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ErrorResponse.builder().status(HttpStatus.BAD_REQUEST).message(errorMessage).build());
 	        } catch (Exception e) {
 	            String errorMessage = "Erro ao redefinir a senha";
-	            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse(500, errorMessage));
+	            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrorResponse.builder().status(HttpStatus.INTERNAL_SERVER_ERROR).message(errorMessage).build());
 	        }
 	 }
 }
