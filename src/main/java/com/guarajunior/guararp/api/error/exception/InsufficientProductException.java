@@ -1,12 +1,14 @@
 package com.guarajunior.guararp.api.error.exception;
 
-public class InsufficientProductException extends RuntimeException {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+import org.springframework.http.HttpStatus;
+
+public class InsufficientProductException extends ApiException {
+	private static final String DEFAULT_MESSAGE = "Produtos insuficientes no estoque";
 
 	public InsufficientProductException(String message) {
-        super(message);
+        super(message, HttpStatus.BAD_REQUEST);
+    }
+	public InsufficientProductException() {
+        super(DEFAULT_MESSAGE, HttpStatus.BAD_REQUEST);
     }
 }

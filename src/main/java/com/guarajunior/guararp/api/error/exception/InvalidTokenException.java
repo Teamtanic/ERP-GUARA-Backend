@@ -1,9 +1,14 @@
 package com.guarajunior.guararp.api.error.exception;
 
-public class InvalidTokenException extends RuntimeException  {
-	private static final long serialVersionUID = 1L;
+import org.springframework.http.HttpStatus;
+
+public class InvalidTokenException extends ApiException  {
+    private static final String DEFAULT_MESSAGE = "Não autorizado";
 
 	public InvalidTokenException(String message) {
-        super(message);
+        super(message, HttpStatus.UNAUTHORIZED);
+    }
+	public InvalidTokenException() {
+        super(DEFAULT_MESSAGE, HttpStatus.UNAUTHORIZED);
     }
 }

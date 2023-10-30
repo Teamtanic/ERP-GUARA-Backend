@@ -1,6 +1,7 @@
 package com.guarajunior.guararp.api.error;
 
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
+import com.guarajunior.guararp.api.error.exception.ApiException;
 import com.guarajunior.guararp.util.ExceptionUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.ConversionNotSupportedException;
@@ -139,5 +140,10 @@ public class CustomResponseEntityExceptionHandler extends ResponseEntityExceptio
 
     public ResponseEntity<Object> defaultHandle(Exception ex, WebRequest request, HttpStatus httpStatus) {
         return handleExceptionInternal(ex, buildDefaultErrorResponse(ex), new HttpHeaders(), httpStatus, request);
+    }
+
+    public ResponseEntity<Object> apiHandle(ApiException ex, WebRequest request) {
+        ErrorResponse response = ErrorResponse.builder().message(ex.getMessage()).status(ex.getStatus()).build();
+        return handleExceptionInternal(ex, response, new HttpHeaders(), ex.getStatus(), request);
     }
 }
