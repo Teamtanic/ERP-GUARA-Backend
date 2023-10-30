@@ -15,10 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Field;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class OfferingService {
@@ -27,22 +24,21 @@ public class OfferingService {
     @Autowired
     private OfferingMapper offeringMapper;
 
-    public Page<OfferingResponse> getAllOfferings(Integer page, Integer size) {
+    public Page<OfferingResponse> getAllOfferings(Integer page, Integer size, String type) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<Offering> offerings = offeringRepository.findAll(pageable);
-        return offeringMapper.pageToResponsePageDTO(offerings);
-    }
+        Page<Offering> offeringPage;
 
-    public Page<OfferingResponse> getAllServices(Integer page, Integer size) {
-        Pageable pageable = PageRequest.of(page, size);
-        Page<Offering> offerings = offeringRepository.findByOfferingType(OfferingType.SERVIÇO, pageable);
-        return offeringMapper.pageToResponsePageDTO(offerings);
-    }
+        Map<String, OfferingType> typeMap = new HashMap<>();
+        typeMap.put("servicos", OfferingType.SERVIÇO);
+        typeMap.put("produtos", OfferingType.PRODUTO);
 
-    public Page<OfferingResponse> getAllProducts(Integer page, Integer size) {
-        Pageable pageable = PageRequest.of(page, size);
-        Page<Offering> offerings = offeringRepository.findByOfferingType(OfferingType.PRODUTO, pageable);
-        return offeringMapper.pageToResponsePageDTO(offerings);
+        if(type == null || !typeMap.containsKey(type)) {
+            offeringPage = offeringRepository.findAll(pageable);
+        } else {
+            offeringPage = offeringRepository.findByOfferingType(typeMap.get(type), pageable);
+        }
+
+        return offeringMapper.pageToResponsePageDTO(offeringPage);
     }
 
     public OfferingResponse createOffering(OfferingCreateRequest offeringCreateRequest) {

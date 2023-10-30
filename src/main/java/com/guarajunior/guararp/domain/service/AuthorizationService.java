@@ -25,11 +25,8 @@ public class AuthorizationService implements UserDetailsService {
     @Override
 	@Transactional
     public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
-        User user = userRepository.findByLogin(login);
-        if (user == null) {
-            throw new UsernameNotFoundException("Usuário não encontrado");
-        }
-        
+        User user = userRepository.findByLogin(login).orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado"));
+
         List<GrantedAuthority> authorities = new ArrayList<>();
         
         Role role = user.getRole();

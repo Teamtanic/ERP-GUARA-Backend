@@ -37,22 +37,21 @@ public class CompanyService {
     private ContactService contactService;
 
 
-    public Page<CompanyResponse> getAllCompanies(Integer page, Integer size) {
+    public Page<CompanyResponse> getAllCompanies(Integer page, Integer size, String relationship) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<Company> companyPage = companyRepository.findAll(pageable);
+        Page<Company> companyPage;
+
+        Map<String, BusinessRelationshipType> relationshipMap = new HashMap<>();
+        relationshipMap.put("clientes", BusinessRelationshipType.CLIENTE);
+        relationshipMap.put("fornecedores", BusinessRelationshipType.FORNECEDOR);
+
+        if (relationship == null || !relationshipMap.containsKey(relationship)) {
+            companyPage = companyRepository.findAll(pageable);
+        } else {
+            companyPage = companyRepository.findByBusinessRelationshipType(relationshipMap.get(relationship), pageable);
+        }
+
         return companyMapper.pageToResponsePageDTO(companyPage);
-    }
-
-    public Page<CompanyResponse> getAllCustomers(Integer page, Integer size) {
-        Pageable pageable = PageRequest.of(page, size);
-        Page<Company> customers = companyRepository.findByBusinessRelationshipType(BusinessRelationshipType.CLIENTE, pageable);
-        return companyMapper.pageToResponsePageDTO(customers);
-    }
-
-    public Page<CompanyResponse> getAllSuppliers(Integer page, Integer size) {
-        Pageable pageable = PageRequest.of(page, size);
-        Page<Company> suppliers = companyRepository.findByBusinessRelationshipType(BusinessRelationshipType.FORNECEDOR, pageable);
-        return companyMapper.pageToResponsePageDTO(suppliers);
     }
 
     public CompanyResponse getCompanyById(UUID id) {

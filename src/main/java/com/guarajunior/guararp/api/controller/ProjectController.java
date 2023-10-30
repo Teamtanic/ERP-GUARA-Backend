@@ -1,11 +1,8 @@
 package com.guarajunior.guararp.api.controller;
 
 import com.guarajunior.guararp.api.dto.project.request.ProjectCreateRequest;
-import com.guarajunior.guararp.api.dto.project.response.ProjectResponse;
 import com.guarajunior.guararp.domain.service.ProjectService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,37 +14,32 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/projetos")
 public class ProjectController {
-    @Autowired
-    private ProjectService projectService;
+    private final ProjectService projectService;
+
+    public ProjectController(ProjectService projectService) {
+        this.projectService = projectService;
+    }
 
     @GetMapping
     public ResponseEntity<?> list(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer size) {
-        Page<ProjectResponse> projects = projectService.getAllProjects(page, size);
-
-        return ResponseEntity.status(HttpStatus.OK).body(projects);
+        return ResponseEntity.status(HttpStatus.OK).body(projectService.getAllProjects(page, size));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getById(@PathVariable UUID id) {
-        ProjectResponse project = projectService.getProjectById(id);
-
-        return ResponseEntity.status(HttpStatus.OK).body(project);
+        return ResponseEntity.status(HttpStatus.OK).body(projectService.getProjectById(id));
     }
 
     @PatchMapping("/{id}")
     @Transactional
     public ResponseEntity<?> update(@Valid @PathVariable UUID id, @RequestBody Map<String, Object> fields) {
-        ProjectResponse updatedProject = projectService.updateProject(id, fields);
-
-        return ResponseEntity.status(HttpStatus.OK).body(updatedProject);
+        return ResponseEntity.status(HttpStatus.OK).body(projectService.updateProject(id, fields));
     }
 
     @PostMapping
     @Transactional
     public ResponseEntity<?> register(@Valid @RequestBody ProjectCreateRequest projectCreateRequest) {
-        ProjectResponse createdProject = projectService.createProject(projectCreateRequest);
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdProject);
+        return ResponseEntity.status(HttpStatus.CREATED).body(projectService.createProject(projectCreateRequest));
     }
 
     @DeleteMapping("/{id}")

@@ -1,10 +1,8 @@
 package com.guarajunior.guararp.api.controller;
 
 import com.guarajunior.guararp.infra.model.Contact;
-import com.guarajunior.guararp.api.error.ErrorResponse;
 import com.guarajunior.guararp.infra.repository.ContactRepository;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,19 +13,14 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/contato")
 public class ContactController {
-	@Autowired
-	private ContactRepository contactRepository;
-	
-	@PostMapping
-	public ResponseEntity<?> register(@Valid @RequestBody Contact contact) {
-		try {
-			Contact savedContact = contactRepository.save(contact);
-			
-			return ResponseEntity.status(HttpStatus.CREATED).body(savedContact);
-		} catch (Exception e) {
-			String errorMessage = "Erro ao salvar contato";
-			//String errorLogMessage = errorMessage + ": " + e.getMessage();
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrorResponse.builder().status(HttpStatus.INTERNAL_SERVER_ERROR).message(errorMessage).build());
-		}
-	}
+    private final ContactRepository contactRepository;
+
+    public ContactController(ContactRepository contactRepository) {
+        this.contactRepository = contactRepository;
+    }
+
+    @PostMapping
+    public ResponseEntity<?> register(@Valid @RequestBody Contact contact) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(contactRepository.save(contact));
+    }
 }

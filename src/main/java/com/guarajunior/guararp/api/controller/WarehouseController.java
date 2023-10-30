@@ -1,12 +1,8 @@
 package com.guarajunior.guararp.api.controller;
 
 import com.guarajunior.guararp.api.dto.productwarehouse.request.ProductWarehouseCreateRequest;
-import com.guarajunior.guararp.api.dto.productwarehouse.response.ProductWarehouseResponse;
-import com.guarajunior.guararp.api.error.ErrorResponse;
 import com.guarajunior.guararp.domain.service.WarehouseService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,42 +14,31 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/produtos")
 public class WarehouseController {
-    @Autowired
-    private WarehouseService warehouseService;
+    private final WarehouseService warehouseService;
+
+    public WarehouseController(WarehouseService warehouseService) {
+        this.warehouseService = warehouseService;
+    }
 
     @GetMapping
     public ResponseEntity<?> list(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer size) {
-        try {
-            Page<ProductWarehouseResponse> items = warehouseService.getAllItems(page, size);
-
-            return ResponseEntity.status(HttpStatus.OK).body(items);
-        } catch (Exception e) {
-            String errorMessage = "Erro ao listar estoque";
-
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrorResponse.builder().status(HttpStatus.INTERNAL_SERVER_ERROR).message(errorMessage).build());
-        }
+        return ResponseEntity.status(HttpStatus.OK).body(warehouseService.getAllItems(page, size));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getById(@PathVariable UUID id) {
-        ProductWarehouseResponse product = warehouseService.getProductById(id);
-
-        return ResponseEntity.status(HttpStatus.OK).body(product);
+        return ResponseEntity.status(HttpStatus.OK).body(warehouseService.getProductById(id));
     }
 
     @PostMapping
     public ResponseEntity<?> register(@Valid @RequestBody ProductWarehouseCreateRequest productWarehouseCreateRequest) {
-        ProductWarehouseResponse createdProduct = warehouseService.createProduct(productWarehouseCreateRequest);
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdProduct);
+        return ResponseEntity.status(HttpStatus.CREATED).body(warehouseService.createProduct(productWarehouseCreateRequest));
     }
 
     @PatchMapping("/{id}")
     @Transactional
     public ResponseEntity<?> update(@PathVariable UUID id, @RequestBody Map<String, Object> fields) {
-        ProductWarehouseResponse updatedProduct = warehouseService.updateProduct(id, fields);
-
-        return ResponseEntity.status(HttpStatus.OK).body(updatedProduct);
+        return ResponseEntity.status(HttpStatus.OK).body(warehouseService.updateProduct(id, fields));
     }
 
     @DeleteMapping("/{id}")

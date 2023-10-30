@@ -152,10 +152,7 @@ public class UserService {
         if (contact == null) {
             throw new EntityNotFoundException("Usuario não encontrada com o email: " + email);
         }
-        User user = userRepository.findByContact(contact);
-        if (user == null) {
-            throw new EntityNotFoundException("Usuario não encontrada com o email: " + email);
-        }
+        User user = userRepository.findByContact(contact).orElseThrow(() -> new EntityNotFoundException("Usuario não encontrada com o email: " + email));
 
         String token = UUID.randomUUID().toString();
         createPasswordResetTokenForUser(user, token);
