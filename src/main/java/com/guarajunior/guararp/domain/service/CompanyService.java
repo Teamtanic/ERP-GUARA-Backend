@@ -11,7 +11,6 @@ import com.guarajunior.guararp.infra.model.Company;
 import com.guarajunior.guararp.infra.model.CompanyRelationship;
 import com.guarajunior.guararp.infra.repository.CompanyRelationshipRepository;
 import com.guarajunior.guararp.infra.repository.CompanyRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -25,16 +24,19 @@ import java.util.*;
 @Service
 public class CompanyService {
 
-    @Autowired
-    private CompanyRepository companyRepository;
-    @Autowired
-    private CompanyRelationshipRepository companyRelationshipRepository;
-    @Autowired
-    private CompanyMapper companyMapper;
-    @Autowired
-    private CompanyRelationshipMapper companyRelationshipMapper;
-    @Autowired
-    private ContactService contactService;
+    private final CompanyRepository companyRepository;
+    private final CompanyRelationshipRepository companyRelationshipRepository;
+    private final CompanyMapper companyMapper;
+    private final CompanyRelationshipMapper companyRelationshipMapper;
+    private final ContactService contactService;
+
+    public CompanyService(CompanyRepository companyRepository, CompanyRelationshipRepository companyRelationshipRepository, CompanyMapper companyMapper, CompanyRelationshipMapper companyRelationshipMapper, ContactService contactService) {
+        this.companyRepository = companyRepository;
+        this.companyRelationshipRepository = companyRelationshipRepository;
+        this.companyMapper = companyMapper;
+        this.companyRelationshipMapper = companyRelationshipMapper;
+        this.contactService = contactService;
+    }
 
 
     public Page<CompanyResponse> getAllCompanies(Integer page, Integer size, String relationship) {
@@ -125,23 +127,20 @@ public class CompanyService {
         Company company = companyRepository.findById(companyId).orElseThrow(() -> new RuntimeException("Empresa não encontrada"));
 
         Optional<CompanyRelationship> customerRelationshipOptional = companyRelationshipRepository.findByCompanyAndIdBusinessRelationship(company, BusinessRelationshipType.CLIENTE);
+        Optional<CompanyRelationship> supplierRelationshipOptional = companyRelationshipRepository.findByCompanyAndIdBusinessRelationship(company, BusinessRelationshipType.FORNECEDOR);
+
+        if (customerRelationshipOptional.isEmpty() && supplierRelationshipOptional.isEmpty()) {
+            throw new EntityNotFoundException("Relações de cliente e fornecedor não encontradas para a empresa com o ID: " + companyId);
+        }
 
         customerRelationshipOptional.ifPresent(customerRelationship -> {
             customerRelationship.setActive(false);
             companyRelationshipRepository.save(customerRelationship);
         });
 
-        Optional<CompanyRelationship> supplierRelationshipOptional = companyRelationshipRepository.findByCompanyAndIdBusinessRelationship(company, BusinessRelationshipType.FORNECEDOR);
-
         supplierRelationshipOptional.ifPresent(supplierRelationship -> {
             supplierRelationship.setActive(false);
             companyRelationshipRepository.save(supplierRelationship);
         });
-
-        if (customerRelationshipOptional.isEmpty() && supplierRelationshipOptional.isEmpty()) {
-            throw new EntityNotFoundException("Relações de cliente e fornecedor não encontradas para a empresa com o ID: " + companyId);
-        }
     }
-
-
 }

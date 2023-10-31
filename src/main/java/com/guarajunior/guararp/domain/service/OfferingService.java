@@ -7,22 +7,26 @@ import com.guarajunior.guararp.infra.enums.OfferingType;
 import com.guarajunior.guararp.infra.model.Offering;
 import com.guarajunior.guararp.infra.repository.OfferingRepository;
 import jakarta.persistence.EntityNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.util.ReflectionUtils;
 
-import java.lang.reflect.Field;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 @Service
 public class OfferingService {
-    @Autowired
-    private OfferingRepository offeringRepository;
-    @Autowired
-    private OfferingMapper offeringMapper;
+    private final OfferingRepository offeringRepository;
+    private final OfferingMapper offeringMapper;
+
+    public OfferingService(OfferingRepository offeringRepository, OfferingMapper offeringMapper) {
+        this.offeringRepository = offeringRepository;
+        this.offeringMapper = offeringMapper;
+    }
 
     public Page<OfferingResponse> getAllOfferings(Integer page, Integer size, String type) {
         Pageable pageable = PageRequest.of(page, size);
@@ -32,7 +36,7 @@ public class OfferingService {
         typeMap.put("servicos", OfferingType.SERVIÇO);
         typeMap.put("produtos", OfferingType.PRODUTO);
 
-        if(type == null || !typeMap.containsKey(type)) {
+        if (type == null || !typeMap.containsKey(type)) {
             offeringPage = offeringRepository.findAll(pageable);
         } else {
             offeringPage = offeringRepository.findByOfferingType(typeMap.get(type), pageable);
@@ -43,7 +47,6 @@ public class OfferingService {
 
     public OfferingResponse createOffering(OfferingCreateRequest offeringCreateRequest) {
         Offering offeringToCreate = offeringMapper.toEntity(offeringCreateRequest);
-
         Offering createdOffering = offeringRepository.save(offeringToCreate);
 
         return offeringMapper.toResponseDTO(createdOffering);
@@ -61,23 +64,15 @@ public class OfferingService {
 
         List<String> nonUpdatableFields = List.of("id");
 
-        fields.forEach((key, value) -> {
-            if (!nonUpdatableFields.contains(key)) {
-                Field field = ReflectionUtils.findField(Offering.class, key);
-                field.setAccessible(true);
-                ReflectionUtils.setField(field, offering, value);
-            }
-        });
+        fields.entrySet().removeIf(entry -> nonUpdatableFields.contains(entry.getKey()));
+        BeanUtils.copyProperties(fields, offering);
 
-        offeringRepository.save(offering);
-
-        return offeringMapper.toResponseDTO(offering);
+        return offeringMapper.toResponseDTO(offeringRepository.save(offering));
     }
 
 
     public void deactivateOffering(UUID id) {
         Offering offering = offeringRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Oferta não encontrada com id: " + id));
-
         offering.setActive(false);
 
         offeringRepository.save(offering);

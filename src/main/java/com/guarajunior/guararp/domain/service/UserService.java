@@ -13,7 +13,6 @@ import com.guarajunior.guararp.domain.mapper.UserMapper;
 import com.guarajunior.guararp.infra.model.*;
 import com.guarajunior.guararp.infra.repository.*;
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -24,28 +23,31 @@ import java.util.UUID;
 
 @Service
 public class UserService {
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private CourseRepository courseRepository;
-    @Autowired
-    private RoleRepository roleRepository;
-    @Autowired
-    private DepartmentRepository departmentRepository;
-    @Autowired
-    private ContactRepository contactRepository;
-    @Autowired
-    private PasswordResetTokenRepository passwordResetTokenRepository;
-    @Autowired
-    private RegisterTokenRepository registerTokenRepository;
-    @Autowired
-    private UserMapper userMapper;
-    @Autowired
-    private ContactService contactService;
-    @Autowired
-    private EmailService emailService;
-    @Autowired
-    private PasswordResetTokenService passwordResetTokenService;
+    private final UserRepository userRepository;
+    private final CourseRepository courseRepository;
+    private final RoleRepository roleRepository;
+    private final DepartmentRepository departmentRepository;
+    private final ContactRepository contactRepository;
+    private final PasswordResetTokenRepository passwordResetTokenRepository;
+    private final RegisterTokenRepository registerTokenRepository;
+    private final UserMapper userMapper;
+    private final ContactService contactService;
+    private final EmailService emailService;
+    private final PasswordResetTokenService passwordResetTokenService;
+
+    public UserService(UserRepository userRepository, CourseRepository courseRepository, RoleRepository roleRepository, DepartmentRepository departmentRepository, ContactRepository contactRepository, PasswordResetTokenRepository passwordResetTokenRepository, RegisterTokenRepository registerTokenRepository, UserMapper userMapper, ContactService contactService, EmailService emailService, PasswordResetTokenService passwordResetTokenService) {
+        this.userRepository = userRepository;
+        this.courseRepository = courseRepository;
+        this.roleRepository = roleRepository;
+        this.departmentRepository = departmentRepository;
+        this.contactRepository = contactRepository;
+        this.passwordResetTokenRepository = passwordResetTokenRepository;
+        this.registerTokenRepository = registerTokenRepository;
+        this.userMapper = userMapper;
+        this.contactService = contactService;
+        this.emailService = emailService;
+        this.passwordResetTokenService = passwordResetTokenService;
+    }
 
     public Page<UserResponse> getAllUsers(Integer page, Integer size) {
         Pageable pageable = PageRequest.of(page, size);
@@ -139,7 +141,6 @@ public class UserService {
 
     public void deactivateUser(UUID id) {
         User user = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Usuario não encontrada com o ID: " + id));
-
         user.setActive(false);
 
         userRepository.save(user);
@@ -219,7 +220,6 @@ public class UserService {
 
         User user = resetToken.getUser();
         String encryptedPassword = new BCryptPasswordEncoder().encode(passwordPostDTO.getPassword());
-
         user.setPassword(encryptedPassword);
 
         userRepository.save(user);

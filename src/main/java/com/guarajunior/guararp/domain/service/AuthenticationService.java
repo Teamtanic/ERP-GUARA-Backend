@@ -7,13 +7,9 @@ import com.guarajunior.guararp.api.dto.user.response.UserResponse;
 import com.guarajunior.guararp.api.error.exception.UniqueKeyViolationException;
 import com.guarajunior.guararp.infra.model.User;
 import com.guarajunior.guararp.infra.repository.UserRepository;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @Service
 public class AuthenticationService {

@@ -10,10 +10,10 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class PasswordResetTokenService {
-	@Autowired
+    @Autowired
     private PasswordResetTokenRepository passwordResetTokenRepository;
-	@Autowired
-	private RegisterTokenRepository registerTokenRepository;
+    @Autowired
+    private RegisterTokenRepository registerTokenRepository;
 
     public PasswordResetToken validatePasswordResetToken(String token) {
         PasswordResetToken resetToken = passwordResetTokenRepository.findByToken(token);
@@ -24,9 +24,9 @@ public class PasswordResetTokenService {
 
         return resetToken;
     }
-    
+
     public RegisterToken validateRegisterTokenToken(String token) {
-    	RegisterToken resetToken = registerTokenRepository.findByToken(token);
+        RegisterToken resetToken = registerTokenRepository.findByToken(token);
 
         if (resetToken == null || resetToken.isExpired()) {
             throw new InvalidTokenException("Token inválido ou expirado");
