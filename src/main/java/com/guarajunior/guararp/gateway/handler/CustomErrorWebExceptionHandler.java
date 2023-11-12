@@ -1,6 +1,5 @@
 package com.guarajunior.guararp.gateway.handler;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.guarajunior.guararp.api.error.ExceptionResponse;
 import com.guarajunior.guararp.gateway.utils.FilterUtils;
 import org.springframework.boot.web.reactive.error.ErrorWebExceptionHandler;

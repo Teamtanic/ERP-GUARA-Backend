@@ -35,7 +35,7 @@ public class FilterUtils {
         return objectMapper;
     }
 
-    public DataBuffer convertResponseEntityToDataBuffer(ServerWebExchange exchange, ResponseEntity responseEntity) {
+    public DataBuffer convertResponseEntityToDataBuffer(ServerWebExchange exchange, ResponseEntity<?> responseEntity) {
         ServerHttpResponse response = exchange.getResponse();
         response.setStatusCode(responseEntity.getStatusCode());
 
@@ -78,9 +78,7 @@ public class FilterUtils {
 
                         System.out.println("Write to database here");
                         return Flux.just();
-                    }))).onErrorResume(err -> {
-                        return Mono.empty();
-                    });
+                    }))).onErrorResume(err -> Mono.empty());
 
                 } else {
                     System.out.println("2000000000");
