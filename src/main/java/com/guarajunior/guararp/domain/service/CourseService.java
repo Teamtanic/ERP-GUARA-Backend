@@ -2,7 +2,9 @@ package com.guarajunior.guararp.domain.service;
 
 import com.guarajunior.guararp.api.dto.course.request.CourseCreateRequest;
 import com.guarajunior.guararp.api.dto.course.response.CourseResponse;
+import com.guarajunior.guararp.api.dto.course.response.CourseWithUsersResponse;
 import com.guarajunior.guararp.domain.mapper.CourseMapper;
+import com.guarajunior.guararp.domain.mapper.CourseWithUsersMapper;
 import com.guarajunior.guararp.infra.model.Course;
 import com.guarajunior.guararp.infra.repository.CourseRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -18,10 +20,12 @@ import java.util.Map;
 public class CourseService {
     private final CourseRepository courseRepository;
     private final CourseMapper courseMapper;
+    private final CourseWithUsersMapper courseWithUsersMapper;
 
-    public CourseService(CourseRepository courseRepository, CourseMapper courseMapper) {
+    public CourseService(CourseRepository courseRepository, CourseMapper courseMapper, CourseWithUsersMapper courseWithUsersMapper) {
         this.courseRepository = courseRepository;
         this.courseMapper = courseMapper;
+        this.courseWithUsersMapper = courseWithUsersMapper;
     }
 
     public Page<CourseResponse> getAllCourses(Integer page, Integer size) {
@@ -41,6 +45,12 @@ public class CourseService {
         Course course = courseRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Curso não encontrado com o ID: " + id));
 
         return courseMapper.toResponseDTO(course);
+    }
+
+    public CourseWithUsersResponse getCourseByIdWithUsers(Integer id) {
+        Course course = courseRepository.findByIdWithUsers(id).orElseThrow(() -> new EntityNotFoundException("Curso não encontrado com o ID: " + id));
+
+        return courseWithUsersMapper.toResponseDTO(course);
     }
 
     public CourseResponse updateCourse(Integer id, Map<String, Object> fields) {

@@ -1,5 +1,6 @@
 package com.guarajunior.guararp.domain.mapper;
 
+import com.guarajunior.guararp.api.dto.course.response.CourseWithUsersResponse;
 import com.guarajunior.guararp.infra.model.Course;
 import com.guarajunior.guararp.api.dto.course.request.CourseCreateRequest;
 import com.guarajunior.guararp.api.dto.course.response.CourseResponse;

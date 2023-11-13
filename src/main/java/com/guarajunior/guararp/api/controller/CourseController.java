@@ -27,7 +27,7 @@ public class CourseController {
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getById(@PathVariable Integer id) {
-        return ResponseEntity.status(HttpStatus.OK).body(courseService.getCourseById(id));
+        return ResponseEntity.status(HttpStatus.OK).body(courseService.getCourseByIdWithUsers(id));
     }
 
     @PatchMapping("/{id}")

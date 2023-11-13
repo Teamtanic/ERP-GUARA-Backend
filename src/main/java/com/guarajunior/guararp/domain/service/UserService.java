@@ -55,10 +55,10 @@ public class UserService {
         return userMapper.pageToResponsePageDTO(userPage);
     }
 
-    public UserResponse getUserById(UUID id) {
+    public User getUserById(UUID id) {
         User user = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Usuario não encontrado com o ID: " + id));
 
-        return userMapper.toResponseDTO(user);
+        return user;
     }
 
     public UserResponse updateUser(UUID id, UserUpdateRequest userUpdateRequest) {
@@ -133,7 +133,7 @@ public class UserService {
         contactService.createContact(contactCreateRequest);
 
         UserResponse userResponse = userMapper.toResponseDTO(createdUser);
-        userResponse.setContact(contactCreateRequest);
+//        userResponse.setContact(contactCreateRequest);
 
         return userResponse;
     }
