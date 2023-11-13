@@ -21,8 +21,8 @@ public class ProjectController {
     }
 
     @GetMapping
-    public ResponseEntity<?> list(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer size) {
-        return ResponseEntity.status(HttpStatus.OK).body(projectService.getAllProjects(page, size));
+    public ResponseEntity<?> list(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer size, @RequestParam(defaultValue = "true") Boolean active) {
+        return ResponseEntity.status(HttpStatus.OK).body(projectService.getAllProjects(active, page, size));
     }
 
     @GetMapping("/{id}")

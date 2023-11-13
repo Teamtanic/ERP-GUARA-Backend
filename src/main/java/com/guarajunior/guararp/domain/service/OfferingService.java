@@ -7,12 +7,13 @@ import com.guarajunior.guararp.infra.enums.OfferingType;
 import com.guarajunior.guararp.infra.model.Offering;
 import com.guarajunior.guararp.infra.repository.OfferingRepository;
 import jakarta.persistence.EntityNotFoundException;
-import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ReflectionUtils;
 
+import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -64,8 +65,13 @@ public class OfferingService {
 
         List<String> nonUpdatableFields = List.of("id");
 
-        fields.entrySet().removeIf(entry -> nonUpdatableFields.contains(entry.getKey()));
-        BeanUtils.copyProperties(fields, offering);
+        fields.forEach((key, value) -> {
+            if (!nonUpdatableFields.contains(key)) {
+                Field field = ReflectionUtils.findField(Offering.class, key);
+                field.setAccessible(true);
+                ReflectionUtils.setField(field, offering, value);
+            }
+        });
 
         return offeringMapper.toResponseDTO(offeringRepository.save(offering));
     }

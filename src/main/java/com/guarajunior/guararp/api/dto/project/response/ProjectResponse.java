@@ -8,6 +8,7 @@ import java.util.List;
 
 @Data
 public class ProjectResponse {
+	private String title;
 	private String description;
 	private CompanyRelationshipProjectResponse companyRelationship;
 	private OfferingResponse offering;

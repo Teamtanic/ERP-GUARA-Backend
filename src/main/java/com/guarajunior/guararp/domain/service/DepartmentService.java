@@ -6,12 +6,13 @@ import com.guarajunior.guararp.domain.mapper.DepartmentMapper;
 import com.guarajunior.guararp.infra.model.Department;
 import com.guarajunior.guararp.infra.repository.DepartmentRepository;
 import jakarta.persistence.EntityNotFoundException;
-import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ReflectionUtils;
 
+import java.lang.reflect.Field;
 import java.util.Map;
 import java.util.UUID;
 
@@ -46,7 +47,12 @@ public class DepartmentService {
 
     public DepartmentResponse updateDepartment(UUID id, Map<String, Object> fields) {
         Department department = departmentRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Curso não encontrado"));
-        BeanUtils.copyProperties(fields, department, "id");
+
+        fields.forEach((key, value) -> {
+            Field field = ReflectionUtils.findField(Department.class, key);
+            field.setAccessible(true);
+            ReflectionUtils.setField(field, department, value);
+        });
 
         return departmentMapper.toResponseDTO(departmentRepository.save(department));
     }

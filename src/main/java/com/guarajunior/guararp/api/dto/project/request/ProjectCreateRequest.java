@@ -8,8 +8,9 @@ import java.util.UUID;
 
 @Data
 public class ProjectCreateRequest {
-	private String description;
-	private List<UUID> companyRelationshipIds;
-	private UUID offeringId;
-	private List<UserRoleDTO> users;
+    private String description;
+    private String title;
+    private List<UUID> companyRelationshipIds;
+    private UUID offeringId;
+    private List<UserRoleDTO> users;
 }

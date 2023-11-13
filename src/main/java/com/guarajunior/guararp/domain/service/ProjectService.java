@@ -7,13 +7,14 @@ import com.guarajunior.guararp.domain.mapper.ProjectMapper;
 import com.guarajunior.guararp.infra.model.*;
 import com.guarajunior.guararp.infra.repository.*;
 import jakarta.persistence.EntityNotFoundException;
-import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.ReflectionUtils;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -37,9 +38,9 @@ public class ProjectService {
         this.userRepository = userRepository;
     }
 
-    public Page<ProjectResponse> getAllProjects(Integer page, Integer size) {
+    public Page<ProjectResponse> getAllProjects(Boolean active, Integer page, Integer size) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<Project> projectPage = projectRepository.findAll(pageable);
+        Page<Project> projectPage = projectRepository.findAllByActive(active, pageable);
         return projectMapper.pageToResponsePageDTO(projectPage);
     }
 
@@ -53,6 +54,7 @@ public class ProjectService {
 
         // Mapeia os dados da requisição para a entidade Project
         Project projectToCreate = projectMapper.toEntity(projectCreateRequest);
+        projectToCreate.setActive(true);
         projectToCreate.setOffering(offering);
         projectToCreate.setCompanyRelationships(companyRelationships);
 
@@ -100,7 +102,11 @@ public class ProjectService {
     public ProjectResponse updateProject(UUID id, Map<String, Object> fields) {
         Project project = projectRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Projeto não encontrado"));
 
-        BeanUtils.copyProperties(fields, project, "id");
+        fields.forEach((key, value) -> {
+            Field field = ReflectionUtils.findField(Project.class, key);
+            field.setAccessible(true);
+            ReflectionUtils.setField(field, project, value);
+        });
 
         return projectMapper.toResponseDTO(projectRepository.save(project));
     }
