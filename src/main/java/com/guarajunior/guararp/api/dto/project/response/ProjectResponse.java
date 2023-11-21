@@ -5,12 +5,13 @@ import com.guarajunior.guararp.api.dto.offering.response.OfferingResponse;
 import lombok.Data;
 
 import java.util.List;
+import java.util.Set;
 
 @Data
 public class ProjectResponse {
 	private String title;
 	private String description;
 	private CompanyRelationshipProjectResponse companyRelationship;
-	private OfferingResponse offering;
+	private Set<OfferingResponse> offerings;
 	private List<UserRoleResponse> users;
 }

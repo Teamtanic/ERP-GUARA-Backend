@@ -2,41 +2,32 @@ package com.guarajunior.guararp.domain.service;
 
 import com.guarajunior.guararp.api.dto.project.UserRoleDTO;
 import com.guarajunior.guararp.api.dto.project.request.ProjectCreateRequest;
+import com.guarajunior.guararp.api.dto.project.request.ProjectUpdateRequest;
 import com.guarajunior.guararp.api.dto.project.response.ProjectResponse;
 import com.guarajunior.guararp.domain.mapper.ProjectMapper;
 import com.guarajunior.guararp.infra.model.*;
 import com.guarajunior.guararp.infra.repository.*;
 import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.ReflectionUtils;
 
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @Service
+@RequiredArgsConstructor
 public class ProjectService {
     private final ProjectRepository projectRepository;
     private final ProjectMapper projectMapper;
+    private final ModelMapper mapper;
     private final CompanyRelationshipRepository companyRelationshipRepository;
     private final OfferingRepository offeringRepository;
     private final ProjectUserRelationRepository projectUserRelationRepository;
     private final UserRepository userRepository;
-
-    public ProjectService(ProjectRepository projectRepository, ProjectMapper projectMapper, CompanyRelationshipRepository companyRelationshipRepository, OfferingRepository offeringRepository, ProjectUserRelationRepository projectUserRelationRepository, UserRepository userRepository) {
-        this.projectRepository = projectRepository;
-        this.projectMapper = projectMapper;
-        this.companyRelationshipRepository = companyRelationshipRepository;
-        this.offeringRepository = offeringRepository;
-        this.projectUserRelationRepository = projectUserRelationRepository;
-        this.userRepository = userRepository;
-    }
 
     public Page<ProjectResponse> getAllProjects(Boolean active, Integer page, Integer size) {
         Pageable pageable = PageRequest.of(page, size);
@@ -49,13 +40,13 @@ public class ProjectService {
         // Verifica a existência de CompanyRelationships
         List<CompanyRelationship> companyRelationships = getCompanyRelationships(projectCreateRequest.getCompanyRelationshipIds());
 
-        // Obtém a Offering
-        Offering offering = offeringRepository.findById(projectCreateRequest.getOfferingId()).orElseThrow(() -> new RuntimeException("Offering não encontrado"));
+        Set<Offering> offerings = new HashSet<>();
+        projectCreateRequest.getOfferingIds().forEach(uuid -> offerings.add(offeringRepository.findById(uuid).orElseThrow(() -> new RuntimeException(String.format("Offering %s não encontrado", uuid)))));
 
         // Mapeia os dados da requisição para a entidade Project
         Project projectToCreate = projectMapper.toEntity(projectCreateRequest);
         projectToCreate.setActive(true);
-        projectToCreate.setOffering(offering);
+        projectToCreate.setOfferings(offerings);
         projectToCreate.setCompanyRelationships(companyRelationships);
 
         // Salva o projeto
@@ -99,14 +90,27 @@ public class ProjectService {
         return projectMapper.toResponseDTO(project);
     }
 
-    public ProjectResponse updateProject(UUID id, Map<String, Object> fields) {
+    public ProjectResponse updateProject(UUID id, ProjectUpdateRequest projectUpdateRequest) {
+        Project project = projectRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Projeto não encontrado"));
+        mapper.map(projectUpdateRequest, project);
+
+        return projectMapper.toResponseDTO(projectRepository.save(project));
+    }
+
+    public ProjectResponse addProjectOfferings(UUID id, List<UUID> offeringIds) {
         Project project = projectRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Projeto não encontrado"));
 
-        fields.forEach((key, value) -> {
-            Field field = ReflectionUtils.findField(Project.class, key);
-            field.setAccessible(true);
-            ReflectionUtils.setField(field, project, value);
-        });
+        Set<Offering> offerings = new HashSet<>();
+        offeringIds.forEach(uuid -> offerings.add(offeringRepository.findById(uuid).orElseThrow(() -> new RuntimeException(String.format("Offering %s não encontrado", uuid)))));
+
+        project.getOfferings().addAll(offerings);
+
+        return projectMapper.toResponseDTO(projectRepository.save(project));
+    }
+
+    public ProjectResponse removeProjectOfferings(UUID id, List<UUID> offeringIds) {
+        Project project = projectRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Projeto não encontrado"));
+        offeringIds.forEach(uuid -> project.getOfferings().removeIf(offering -> offering.getId().equals(uuid)));
 
         return projectMapper.toResponseDTO(projectRepository.save(project));
     }

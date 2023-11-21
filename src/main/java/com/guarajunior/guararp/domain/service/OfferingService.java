@@ -7,27 +7,23 @@ import com.guarajunior.guararp.infra.enums.OfferingType;
 import com.guarajunior.guararp.infra.model.Offering;
 import com.guarajunior.guararp.infra.repository.OfferingRepository;
 import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.util.ReflectionUtils;
 
-import java.lang.reflect.Field;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class OfferingService {
     private final OfferingRepository offeringRepository;
     private final OfferingMapper offeringMapper;
-
-    public OfferingService(OfferingRepository offeringRepository, OfferingMapper offeringMapper) {
-        this.offeringRepository = offeringRepository;
-        this.offeringMapper = offeringMapper;
-    }
+    private final ModelMapper mapper;
 
     public Page<OfferingResponse> getAllOfferings(Integer page, Integer size, String type) {
         Pageable pageable = PageRequest.of(page, size);
@@ -48,6 +44,7 @@ public class OfferingService {
 
     public OfferingResponse createOffering(OfferingCreateRequest offeringCreateRequest) {
         Offering offeringToCreate = offeringMapper.toEntity(offeringCreateRequest);
+        offeringToCreate.setActive(true);
         Offering createdOffering = offeringRepository.save(offeringToCreate);
 
         return offeringMapper.toResponseDTO(createdOffering);
@@ -60,18 +57,10 @@ public class OfferingService {
         return offeringMapper.toResponseDTO(offering);
     }
 
-    public OfferingResponse updateOffering(UUID id, Map<String, Object> fields) {
+    public OfferingResponse updateOffering(UUID id, OfferingCreateRequest offeringCreateRequest) {
         Offering offering = offeringRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Oferta não encontrada com id: " + id));
 
-        List<String> nonUpdatableFields = List.of("id");
-
-        fields.forEach((key, value) -> {
-            if (!nonUpdatableFields.contains(key)) {
-                Field field = ReflectionUtils.findField(Offering.class, key);
-                field.setAccessible(true);
-                ReflectionUtils.setField(field, offering, value);
-            }
-        });
+        mapper.map(offeringCreateRequest, offering);
 
         return offeringMapper.toResponseDTO(offeringRepository.save(offering));
     }

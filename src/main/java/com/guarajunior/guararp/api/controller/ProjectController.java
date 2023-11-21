@@ -1,6 +1,8 @@
 package com.guarajunior.guararp.api.controller;
 
 import com.guarajunior.guararp.api.dto.project.request.ProjectCreateRequest;
+import com.guarajunior.guararp.api.dto.project.request.ProjectOfferingsUpdateRequest;
+import com.guarajunior.guararp.api.dto.project.request.ProjectUpdateRequest;
 import com.guarajunior.guararp.domain.service.ProjectService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -8,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -32,8 +33,20 @@ public class ProjectController {
 
     @PatchMapping("/{id}")
     @Transactional
-    public ResponseEntity<?> update(@Valid @PathVariable UUID id, @RequestBody Map<String, Object> fields) {
-        return ResponseEntity.status(HttpStatus.OK).body(projectService.updateProject(id, fields));
+    public ResponseEntity<?> update(@Valid @PathVariable UUID id, @RequestBody ProjectUpdateRequest projectUpdateRequest) {
+        return ResponseEntity.status(HttpStatus.OK).body(projectService.updateProject(id, projectUpdateRequest));
+    }
+
+    @PatchMapping("/{id}/ofertas/adicionar")
+    @Transactional
+    public ResponseEntity<?> addOfferings(@Valid @PathVariable UUID id, @RequestBody ProjectOfferingsUpdateRequest dto) {
+        return ResponseEntity.status(HttpStatus.OK).body(projectService.addProjectOfferings(id, dto.offeringIds()));
+    }
+
+    @PatchMapping("/{id}/ofertas/remover")
+    @Transactional
+    public ResponseEntity<?> removeOfferings(@Valid @PathVariable UUID id, @RequestBody ProjectOfferingsUpdateRequest dto) {
+        return ResponseEntity.status(HttpStatus.OK).body(projectService.removeProjectOfferings(id, dto.offeringIds()));
     }
 
     @PostMapping

@@ -1,12 +1,12 @@
 package com.guarajunior.guararp.infra.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Data
@@ -20,10 +20,8 @@ public class Project {
     private Boolean status;
     private Boolean active;
 
-    @ManyToOne
-    @JoinColumn(name = "id_offering", nullable = false, referencedColumnName = "id")
-    @JsonIgnore
-    private Offering offering;
+    @ManyToMany(fetch = FetchType.EAGER)
+    private Set<Offering> offerings;
 
     private UUID createdBy;
     @Column(name = "created_at")

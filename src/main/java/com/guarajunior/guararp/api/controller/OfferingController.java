@@ -8,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -22,7 +21,6 @@ public class OfferingController {
 
     @GetMapping
     public ResponseEntity<?> list(@RequestParam(required = false) String type, @RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer size) {
-
         return ResponseEntity.status(HttpStatus.OK).body(offeringService.getAllOfferings(page, size, type));
     }
 
@@ -33,8 +31,8 @@ public class OfferingController {
 
     @PatchMapping("/{id}")
     @Transactional
-    public ResponseEntity<?> update(@Valid @PathVariable UUID id, @RequestBody Map<String, Object> fields) {
-        return ResponseEntity.status(HttpStatus.OK).body(offeringService.updateOffering(id, fields));
+    public ResponseEntity<?> update(@Valid @PathVariable UUID id, @RequestBody OfferingCreateRequest offeringCreateRequest) {
+        return ResponseEntity.status(HttpStatus.OK).body(offeringService.updateOffering(id, offeringCreateRequest));
     }
 
     @PostMapping

@@ -4,7 +4,7 @@ name: guararp
 services:
   mysql:
     image: mysql
-    restart: always
+    restart: no
     environment:
       MYSQL_ROOT_PASSWORD: 'root'
     ports:
