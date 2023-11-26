@@ -41,4 +41,7 @@ public class Project {
 
     @ManyToMany(mappedBy = "projects")
     private List<CompanyRelationship> companyRelationships;
+
+    @OneToMany
+    private  Set<Document> documents;
 }
