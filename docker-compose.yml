@@ -1,5 +1,5 @@
-version: '2.0'
-name: guararp
+version: "2"
+name: "guararp"
 
 services:
   mysql:
@@ -14,7 +14,7 @@ services:
     volumes:
       - my-db:/var/lib/mysql
   alfresco:
-    image: docker.io/alfresco/alfresco-content-repository-community:7.4.1.1
+    image: docker.io/alfresco/alfresco-content-repository-community:23.1.0
     mem_limit: 1900m
     environment:
       JAVA_TOOL_OPTIONS: >-
@@ -50,7 +50,7 @@ services:
         -XX:MinRAMPercentage=50
         -XX:MaxRAMPercentage=80
   transform-core-aio:
-    image: alfresco/alfresco-transform-core-aio:4.0.0
+    image: alfresco/alfresco-transform-core-aio:5.0.1
     mem_limit: 1536m
     environment:
       JAVA_OPTS: >-
@@ -59,7 +59,7 @@ services:
     ports:
       - "8090:8090"
   share:
-    image: docker.io/alfresco/alfresco-share:7.4.1.1
+    image: docker.io/alfresco/alfresco-share:23.1.1
     mem_limit: 1g
     environment:
       REPO_HOST: "alfresco"
@@ -82,7 +82,7 @@ services:
     ports:
       - "5432:5432"
   solr6:
-    image: docker.io/alfresco/alfresco-search-services:2.0.8.1
+    image: docker.io/alfresco/alfresco-search-services:2.0.8.2
     mem_limit: 2g
     environment:
       # Solr needs to know how to register itself with Alfresco
@@ -101,7 +101,7 @@ services:
     ports:
       - "8083:8983" # Browser port
   activemq:
-    image: alfresco/alfresco-activemq:5.17.1-jre11-rockylinux8
+    image: alfresco/alfresco-activemq:5.18-jre17-rockylinux8
     mem_limit: 1g
     ports:
       - "8161:8161" # Web Console
@@ -109,12 +109,12 @@ services:
       - "61616:61616" # OpenWire
       - "61613:61613" # STOMP
   content-app:
-    image: alfresco/alfresco-content-app:4.2.0
+    image: alfresco/alfresco-content-app:4.3.0
     mem_limit: 128m
     environment:
       APP_BASE_SHARE_URL: "http://localhost:8080/aca/#/preview/s"
   control-center:
-    image: quay.io/alfresco/alfresco-control-center:8.2.0
+    image: quay.io/alfresco/alfresco-control-center:8.3.0
     mem_limit: 128m
     environment:
       APP_CONFIG_PROVIDER: "ECM"
@@ -133,12 +133,13 @@ services:
       - content-app
       - control-center
     ports:
-      - "8081:8080"
+      - "8080:8080"
     links:
       - content-app
       - alfresco
       - share
       - control-center
+
 
 volumes:
   my-db:
