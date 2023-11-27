@@ -1,9 +1,7 @@
 package com.guarajunior.guararp.api.controller;
 
 import com.guarajunior.guararp.api.dto.documenttype.request.DocumentTypeRequest;
-import com.guarajunior.guararp.api.dto.transaction.request.TransactionCreateRequest;
 import com.guarajunior.guararp.domain.service.DocumentTypeService;
-import com.guarajunior.guararp.domain.service.TransactionService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
