@@ -6,9 +6,11 @@ import lombok.Data;
 
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 @Data
 public class ProjectResponse {
+	private UUID id;
 	private String title;
 	private String description;
 	private CompanyRelationshipProjectResponse companyRelationship;

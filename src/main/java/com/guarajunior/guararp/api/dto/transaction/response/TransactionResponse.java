@@ -12,9 +12,11 @@ import lombok.Data;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 
 @Data
 public class TransactionResponse {
+	private UUID id;
 	private String description;
 	private BigDecimal amount;
 	private TransactionType type;

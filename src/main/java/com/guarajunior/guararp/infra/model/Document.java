@@ -1,7 +1,6 @@
 package com.guarajunior.guararp.infra.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
@@ -28,8 +27,12 @@ public class Document {
     @NotNull
     private Project project;
 
-    @JsonProperty("projectId")
-    public UUID getProjectId() {
-        return project.getId();
+    public Document() {
+    }
+
+    public Document(DocumentType documentType, String alfrescoId, Project project) {
+        this.documentType = documentType;
+        this.alfrescoId = alfrescoId;
+        this.project = project;
     }
 }
