@@ -54,7 +54,6 @@ public class ProjectService {
 
         // Cria e associa os usuários ao projeto
         List<ProjectUserRelation> usersInProject = createProjectUserRelations(projectToCreate, projectCreateRequest.getUsers());
-
         projectToCreate.setProjectUserRelations(usersInProject);
 
         return projectMapper.toResponseDTO(projectToCreate);
@@ -73,9 +72,12 @@ public class ProjectService {
     private List<ProjectUserRelation> createProjectUserRelations(Project project, List<UserRoleDTO> users) {
         List<ProjectUserRelation> usersInProject = new ArrayList<>();
         for (UserRoleDTO userRoleDTO : users) {
-            User user = userRepository.findById(userRoleDTO.getUserId()).orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+            User user = userRepository.findById(userRoleDTO.getUserId())
+                    .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
 
             ProjectUserRelation userInProject = new ProjectUserRelation();
+            ProjectUserRelation.ProjectUserKey userKey = new ProjectUserRelation.ProjectUserKey(project.getId(), user.getId());
+            userInProject.setId(userKey);
             userInProject.setProject(project);
             userInProject.setUser(user);
             userInProject.setRole(userRoleDTO.getRole());

@@ -3,6 +3,7 @@ package com.guarajunior.guararp.infra.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.util.Date;
@@ -47,6 +48,7 @@ public class User {
 	private Course course;
 	
 	@OneToOne(mappedBy = "user")
+	@ToString.Exclude
 	private Contact contact;
 }
 

@@ -1,7 +1,10 @@
 package com.guarajunior.guararp.infra.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.io.Serializable;
 import java.util.UUID;
@@ -14,14 +17,16 @@ public class ProjectUserRelation {
     @EmbeddedId
     private ProjectUserKey id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @MapsId("projectId")
     @JoinColumn(name = "id_project")
+    @JsonIgnore()
     private Project project;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @MapsId("userId")
     @JoinColumn(name = "id_user")
+    @ToString.Exclude
     private User user;
 
     @Column(name = "role")
@@ -29,13 +34,17 @@ public class ProjectUserRelation {
 
     @Data
     @Embeddable
+    @NoArgsConstructor
     public static class ProjectUserKey implements Serializable {
-		private static final long serialVersionUID = 1L;
-
 		@Column(name = "id_project")
         private UUID projectId;
 
         @Column(name = "id_user")
         private UUID userId;
+
+        public ProjectUserKey(UUID projectId, UUID userId) {
+            this.projectId = projectId;
+            this.userId = userId;
+        }
     }
 }

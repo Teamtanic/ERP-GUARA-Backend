@@ -2,6 +2,7 @@ package com.guarajunior.guararp.infra.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.util.Date;
@@ -36,10 +37,11 @@ public class Project {
     @OneToMany(mappedBy = "project")
     private List<Transaction> transactions;
 
-    @OneToMany(mappedBy = "project")
+    @OneToMany(mappedBy = "project", fetch = FetchType.EAGER)
+    @ToString.Exclude
     private List<ProjectUserRelation> projectUserRelations;
 
-    @ManyToMany(mappedBy = "projects")
+    @ManyToMany(mappedBy = "projects", fetch = FetchType.EAGER)
     private List<CompanyRelationship> companyRelationships;
 
     @OneToMany

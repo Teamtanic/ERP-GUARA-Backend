@@ -1,13 +1,14 @@
 package com.guarajunior.guararp.api.dto.project.response;
 
-import com.guarajunior.guararp.infra.model.User;
+import com.guarajunior.guararp.api.dto.user.response.UserResponse;
+import lombok.AllArgsConstructor;
 import lombok.Data;
-
-import java.util.UUID;
+import lombok.NoArgsConstructor;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class UserRoleResponse {
-	private UUID id;
-	private User user;
-	private String role;
+    private UserResponse user;
+    private String role;
 }
