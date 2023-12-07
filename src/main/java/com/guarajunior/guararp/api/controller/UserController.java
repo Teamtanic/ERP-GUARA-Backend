@@ -2,9 +2,11 @@ package com.guarajunior.guararp.api.controller;
 
 import com.guarajunior.guararp.api.dto.user.request.UserEmailRequest;
 import com.guarajunior.guararp.api.dto.user.request.UserUpdateRequest;
+import com.guarajunior.guararp.api.dto.user.response.UserResponse;
 import com.guarajunior.guararp.domain.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,18 +24,18 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<?> list(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer size) {
+    public ResponseEntity<Page<UserResponse>> list(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer size) {
         return ResponseEntity.status(HttpStatus.OK).body(userService.getAllUsers(page, size));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getById(@PathVariable UUID id) {
+    public ResponseEntity<UserResponse> getById(@PathVariable UUID id) {
         return ResponseEntity.status(HttpStatus.OK).body(userService.getUserById(id));
     }
 
     @PatchMapping("/{id}")
     @Transactional
-    public ResponseEntity<?> update(@Valid @PathVariable UUID id, @RequestBody UserUpdateRequest userUpdateRequest) {
+    public ResponseEntity<UserResponse> update(@Valid @PathVariable UUID id, @RequestBody UserUpdateRequest userUpdateRequest) {
         return ResponseEntity.status(HttpStatus.OK).body(userService.updateUser(id, userUpdateRequest));
     }
 

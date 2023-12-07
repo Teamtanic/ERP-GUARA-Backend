@@ -2,6 +2,7 @@ package com.guarajunior.guararp.api.controller;
 
 import com.guarajunior.guararp.alfresco.producer.CreateSiteProducer;
 import com.guarajunior.guararp.api.dto.document.request.DocumentRequest;
+import com.guarajunior.guararp.api.dto.document.response.DocumentResponse;
 import com.guarajunior.guararp.domain.service.DocumentService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +22,7 @@ public class DocumentController {
     final private CreateSiteProducer createSiteProducer;
 
     @PostMapping("/documentos/criar-site")
-    public ResponseEntity<?> createSite() throws IOException {
+    public ResponseEntity<Site> createSite() throws IOException {
         Site site = createSiteProducer.execute("guararp");
         return ResponseEntity.created(URI.create(site.getId())).body(site);
     }
@@ -32,12 +33,12 @@ public class DocumentController {
     }
 
     @PostMapping("/projeto/{projectId}/documentos/upload")
-    public ResponseEntity<?> handleFileUpload(@PathVariable UUID projectId, @Valid @ModelAttribute DocumentRequest documentRequest) {
+    public ResponseEntity<DocumentResponse> handleFileUpload(@PathVariable UUID projectId, @Valid @ModelAttribute DocumentRequest documentRequest) {
         return ResponseEntity.ok(documentService.handleFileUpload(projectId, documentRequest));
     }
 
     @GetMapping("/documentos/{documentId}")
-    public ResponseEntity<?> getDocumentById(@PathVariable UUID documentId) {
+    public ResponseEntity<DocumentResponse> getDocumentById(@PathVariable UUID documentId) {
         return ResponseEntity.ok(documentService.getDocumentById(documentId));
     }
 }

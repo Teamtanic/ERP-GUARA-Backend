@@ -1,6 +1,7 @@
 package com.guarajunior.guararp.domain.service;
 
 import com.guarajunior.guararp.api.dto.contact.request.ContactCreateRequest;
+import com.guarajunior.guararp.api.dto.contact.response.ContactResponse;
 import com.guarajunior.guararp.domain.mapper.ContactMapper;
 import com.guarajunior.guararp.infra.model.Contact;
 import com.guarajunior.guararp.infra.repository.ContactRepository;
@@ -18,8 +19,8 @@ public class ContactService {
     }
 
     @Transactional
-    public void createContact(ContactCreateRequest contactCreateDTO) {
+    public ContactResponse createContact(ContactCreateRequest contactCreateDTO) {
         Contact newContact = contactMapper.toEntity(contactCreateDTO);
-        contactRepository.save(newContact);
+        return contactMapper.toResponseDTO(contactRepository.save(newContact));
     }
 }

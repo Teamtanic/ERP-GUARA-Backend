@@ -1,8 +1,10 @@
 package com.guarajunior.guararp.api.controller;
 
 import com.guarajunior.guararp.api.dto.bankaccount.request.BankAccountCreateRequest;
+import com.guarajunior.guararp.api.dto.bankaccount.response.BankAccountResponse;
 import com.guarajunior.guararp.domain.service.BankAccountService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,23 +23,23 @@ public class BankAccountController {
     }
 
     @GetMapping
-    public ResponseEntity<?> list(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer size) {
+    public ResponseEntity<Page<BankAccountResponse>> list(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer size) {
         return ResponseEntity.status(HttpStatus.OK).body(bankAccountService.listAll(page, size));
     }
 
     @PostMapping
-    public ResponseEntity<?> register(@Valid @RequestBody BankAccountCreateRequest bankAccountCreateRequest) {
+    public ResponseEntity<BankAccountResponse> register(@Valid @RequestBody BankAccountCreateRequest bankAccountCreateRequest) {
         return ResponseEntity.status(HttpStatus.OK).body(bankAccountService.createAccount(bankAccountCreateRequest));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getById(@PathVariable UUID id) {
+    public ResponseEntity<BankAccountResponse> getById(@PathVariable UUID id) {
         return ResponseEntity.status(HttpStatus.OK).body(bankAccountService.getBankAccountById(id));
     }
 
     @PatchMapping("/{id}")
     @Transactional
-    public ResponseEntity<?> update(@Valid @PathVariable UUID id, @RequestBody Map<String, Object> fields) {
+    public ResponseEntity<BankAccountResponse> update(@Valid @PathVariable UUID id, @RequestBody Map<String, Object> fields) {
         return ResponseEntity.status(HttpStatus.OK).body(bankAccountService.updateBankAccount(id, fields));
     }
 

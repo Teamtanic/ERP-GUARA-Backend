@@ -1,8 +1,10 @@
 package com.guarajunior.guararp.api.controller;
 
 import com.guarajunior.guararp.api.dto.department.request.DepartmentCreateRequest;
+import com.guarajunior.guararp.api.dto.department.response.DepartmentResponse;
 import com.guarajunior.guararp.domain.service.DepartmentService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,24 +23,24 @@ public class DepartmentController {
     }
 
     @GetMapping
-    public ResponseEntity<?> list(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer size) {
+    public ResponseEntity<Page<DepartmentResponse>> list(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer size) {
         return ResponseEntity.status(HttpStatus.OK).body(departmentService.getAllDepartments(page, size));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getById(@PathVariable UUID id) {
+    public ResponseEntity<DepartmentResponse> getById(@PathVariable UUID id) {
         return ResponseEntity.status(HttpStatus.OK).body(departmentService.getDepartmentById(id));
     }
 
     @PatchMapping("/{id}")
     @Transactional
-    public ResponseEntity<?> update(@Valid @PathVariable UUID id, @RequestBody Map<String, Object> fields) {
+    public ResponseEntity<DepartmentResponse> update(@Valid @PathVariable UUID id, @RequestBody Map<String, Object> fields) {
         return ResponseEntity.status(HttpStatus.OK).body(departmentService.updateDepartment(id, fields));
     }
 
     @PostMapping
     @Transactional
-    public ResponseEntity<?> register(@Valid @RequestBody DepartmentCreateRequest departmentCreateRequest) {
+    public ResponseEntity<DepartmentResponse> register(@Valid @RequestBody DepartmentCreateRequest departmentCreateRequest) {
         return ResponseEntity.status(HttpStatus.CREATED).body(departmentService.createDepartment(departmentCreateRequest));
     }
 

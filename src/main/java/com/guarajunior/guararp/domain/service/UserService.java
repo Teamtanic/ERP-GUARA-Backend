@@ -55,8 +55,9 @@ public class UserService {
         return userMapper.pageToResponsePageDTO(userPage);
     }
 
-    public User getUserById(UUID id) {
-        return userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Usuario não encontrado com o ID: " + id));
+    public UserResponse getUserById(UUID id) {
+        User user = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Usuario não encontrado com o ID: " + id));
+        return userMapper.toResponseDTO(user);
     }
 
     public UserResponse updateUser(UUID id, UserUpdateRequest userUpdateRequest) {
