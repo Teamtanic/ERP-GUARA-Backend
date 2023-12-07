@@ -3,7 +3,6 @@ package com.guarajunior.guararp.api.controller;
 import com.guarajunior.guararp.api.dto.contact.request.ContactCreateRequest;
 import com.guarajunior.guararp.api.dto.contact.response.ContactResponse;
 import com.guarajunior.guararp.domain.service.ContactService;
-import com.guarajunior.guararp.infra.repository.ContactRepository;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
