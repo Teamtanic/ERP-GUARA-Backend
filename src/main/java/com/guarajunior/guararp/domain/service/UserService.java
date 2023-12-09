@@ -1,7 +1,6 @@
 package com.guarajunior.guararp.domain.service;
 
 
-import com.guarajunior.guararp.api.dto.contact.request.ContactCreateRequest;
 import com.guarajunior.guararp.api.dto.user.request.UserEmailRequest;
 import com.guarajunior.guararp.api.dto.user.request.UserPasswordRequest;
 import com.guarajunior.guararp.api.dto.user.request.UserRegisterRequest;
@@ -13,6 +12,7 @@ import com.guarajunior.guararp.domain.mapper.UserMapper;
 import com.guarajunior.guararp.infra.model.*;
 import com.guarajunior.guararp.infra.repository.*;
 import jakarta.servlet.http.HttpServletRequest;
+import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -31,11 +31,11 @@ public class UserService {
     private final PasswordResetTokenRepository passwordResetTokenRepository;
     private final RegisterTokenRepository registerTokenRepository;
     private final UserMapper userMapper;
-    private final ContactService contactService;
+    private final ModelMapper mapper;
     private final EmailService emailService;
     private final PasswordResetTokenService passwordResetTokenService;
 
-    public UserService(UserRepository userRepository, CourseRepository courseRepository, RoleRepository roleRepository, DepartmentRepository departmentRepository, ContactRepository contactRepository, PasswordResetTokenRepository passwordResetTokenRepository, RegisterTokenRepository registerTokenRepository, UserMapper userMapper, ContactService contactService, EmailService emailService, PasswordResetTokenService passwordResetTokenService) {
+    public UserService(UserRepository userRepository, CourseRepository courseRepository, RoleRepository roleRepository, DepartmentRepository departmentRepository, ContactRepository contactRepository, PasswordResetTokenRepository passwordResetTokenRepository, RegisterTokenRepository registerTokenRepository, UserMapper userMapper, ModelMapper mapper, EmailService emailService, PasswordResetTokenService passwordResetTokenService) {
         this.userRepository = userRepository;
         this.courseRepository = courseRepository;
         this.roleRepository = roleRepository;
@@ -44,7 +44,7 @@ public class UserService {
         this.passwordResetTokenRepository = passwordResetTokenRepository;
         this.registerTokenRepository = registerTokenRepository;
         this.userMapper = userMapper;
-        this.contactService = contactService;
+        this.mapper = mapper;
         this.emailService = emailService;
         this.passwordResetTokenService = passwordResetTokenService;
     }
@@ -63,18 +63,6 @@ public class UserService {
     public UserResponse updateUser(UUID id, UserUpdateRequest userUpdateRequest) {
         User user = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Usuario não encontrado com o ID: " + id));
 
-        if (userUpdateRequest.getName() != null) {
-            user.setName(userUpdateRequest.getName());
-        }
-
-        if (userUpdateRequest.getPassword() != null) {
-            user.setPassword(userUpdateRequest.getPassword());
-        }
-
-        if (userUpdateRequest.getProntuary() != null) {
-            user.setProntuary(userUpdateRequest.getProntuary());
-        }
-
         if (userUpdateRequest.getCourseId() != null) {
             Course course = courseRepository.findById(userUpdateRequest.getCourseId()).orElseThrow(() -> new EntityNotFoundException("Curso não encontrado com o ID: " + userUpdateRequest.getCourseId()));
             user.setCourse(course);
@@ -90,51 +78,39 @@ public class UserService {
             user.setDepartment(department);
         }
 
-        userRepository.save(user);
+        mapper.map(userUpdateRequest, user);
 
-        return userMapper.toResponseDTO(user);
+        return userMapper.toResponseDTO(userRepository.save(user));
     }
 
 
     public UserResponse createUser(UserRegisterRequest userRegisterRequest) {
-        User userToCreate = new User();
+        User userToCreate = mapper.map(userRegisterRequest, User.class);
+
         String encryptedPassword = new BCryptPasswordEncoder().encode(userRegisterRequest.getPassword());
-        userToCreate.setName(userRegisterRequest.getName());
-        userToCreate.setLogin(userRegisterRequest.getLogin());
         userToCreate.setPassword(encryptedPassword);
-        userToCreate.setProntuary(userRegisterRequest.getProntuary());
+
         userToCreate.setActive(true);
         userToCreate.setStatus(true);
 
-        if (userRegisterRequest.getCourseId() != null) {
-            Course course = courseRepository.findById(userRegisterRequest.getCourseId()).orElseThrow(() -> new EntityNotFoundException("Curso não encontrado"));
-            userToCreate.setCourse(course);
-        }
+        Course course = courseRepository.findById(userRegisterRequest.getCourseId()).orElseThrow(() -> new EntityNotFoundException("Curso não encontrado"));
+        userToCreate.setCourse(course);
 
-        if (userRegisterRequest.getRoleId() != null) {
-            Role role = roleRepository.findById(userRegisterRequest.getRoleId()).orElseThrow(() -> new EntityNotFoundException("Cargo não encontrado"));
-            userToCreate.setRole(role);
-        }
+        Role role = roleRepository.findById(userRegisterRequest.getRoleId()).orElseThrow(() -> new EntityNotFoundException("Cargo não encontrado"));
+        userToCreate.setRole(role);
 
-        if (userRegisterRequest.getDepartmentId() != null) {
-            Department department = departmentRepository.findById(userRegisterRequest.getDepartmentId()).orElseThrow(() -> new EntityNotFoundException("Departamento não encontrado"));
-            userToCreate.setDepartment(department);
-        }
+        Department department = departmentRepository.findById(userRegisterRequest.getDepartmentId()).orElseThrow(() -> new EntityNotFoundException("Departamento não encontrado"));
+        userToCreate.setDepartment(department);
 
-        User createdUser = userRepository.save(userToCreate);
+        userRepository.save(userToCreate);
 
-        // Cria o contato
-        ContactCreateRequest contactCreateRequest = new ContactCreateRequest();
-        contactCreateRequest.setEmail(userRegisterRequest.getEmail());
-        contactCreateRequest.setTelephone(userRegisterRequest.getTelephone());
-        contactCreateRequest.setCell_phone(userRegisterRequest.getCell_phone());
-        contactCreateRequest.setUser(createdUser);
-        contactService.createContact(contactCreateRequest);
+        Contact contact = mapper.map(userRegisterRequest, Contact.class);
+        contact.setUser(userToCreate);
 
-        UserResponse userResponse = userMapper.toResponseDTO(createdUser);
-//        userResponse.setContact(contactCreateRequest);
+        contactRepository.save(contact);
 
-        return userResponse;
+        userToCreate.setContact(contact);
+        return userMapper.toResponseDTO(userToCreate);
     }
 
 
@@ -182,12 +158,9 @@ public class UserService {
         if (registerToken == null) throw new EntityNotFoundException("Token para cadastro não encontrado: " + token);
         if (registerToken.isExpired()) throw new InvalidTokenException("Token já expirou, solicite outro");
 
-        User userToCreate = new User();
+        User userToCreate = mapper.map(userRegisterRequest, User.class);
         String encryptedPassword = new BCryptPasswordEncoder().encode(userRegisterRequest.getPassword());
-        userToCreate.setName(userRegisterRequest.getName());
-        userToCreate.setLogin(userRegisterRequest.getLogin());
         userToCreate.setPassword(encryptedPassword);
-        userToCreate.setProntuary(userRegisterRequest.getProntuary());
         userToCreate.setActive(true);
         userToCreate.setStatus(true);
 
@@ -198,16 +171,14 @@ public class UserService {
 
         User createdUser = userRepository.save(userToCreate);
 
-        // Cria o contato
-        ContactCreateRequest contactCreateRequest = new ContactCreateRequest();
-        contactCreateRequest.setEmail(userRegisterRequest.getEmail());
-        contactCreateRequest.setTelephone(userRegisterRequest.getTelephone());
-        contactCreateRequest.setCell_phone(userRegisterRequest.getCell_phone());
-        contactCreateRequest.setUser(createdUser);
-        contactService.createContact(contactCreateRequest);
+        Contact contact = mapper.map(userRegisterRequest, Contact.class);
+        contact.setUser(createdUser);
+
+        contactRepository.save(contact);
+
+        createdUser.setContact(contact);
 
         UserResponse userResponse = userMapper.toResponseDTO(createdUser);
-        userResponse.setContact(contactCreateRequest);
 
         registerTokenRepository.delete(registerToken);
 

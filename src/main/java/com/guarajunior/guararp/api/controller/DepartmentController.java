@@ -10,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -34,8 +33,8 @@ public class DepartmentController {
 
     @PatchMapping("/{id}")
     @Transactional
-    public ResponseEntity<DepartmentResponse> update(@Valid @PathVariable UUID id, @RequestBody Map<String, Object> fields) {
-        return ResponseEntity.status(HttpStatus.OK).body(departmentService.updateDepartment(id, fields));
+    public ResponseEntity<DepartmentResponse> update(@Valid @PathVariable UUID id, @RequestBody DepartmentCreateRequest departmentCreateRequest) {
+        return ResponseEntity.status(HttpStatus.OK).body(departmentService.updateDepartment(id, departmentCreateRequest));
     }
 
     @PostMapping

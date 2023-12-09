@@ -39,6 +39,6 @@ public class Company {
 	private List<CompanyRelationship> companyRelationships;
 	
 	@JsonBackReference
-	@OneToMany(mappedBy = "company")
+	@OneToMany(mappedBy = "company", fetch = FetchType.EAGER)
 	private List<Contact> contact;
 }

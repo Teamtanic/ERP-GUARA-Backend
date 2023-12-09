@@ -6,24 +6,24 @@ import com.guarajunior.guararp.domain.mapper.DepartmentMapper;
 import com.guarajunior.guararp.infra.model.Department;
 import com.guarajunior.guararp.infra.repository.DepartmentRepository;
 import jakarta.persistence.EntityNotFoundException;
+import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.util.ReflectionUtils;
 
-import java.lang.reflect.Field;
-import java.util.Map;
 import java.util.UUID;
 
 @Service
 public class DepartmentService {
     private final DepartmentRepository departmentRepository;
     private final DepartmentMapper departmentMapper;
+    private final ModelMapper mapper;
 
-    public DepartmentService(DepartmentRepository departmentRepository, DepartmentMapper departmentMapper) {
+    public DepartmentService(DepartmentRepository departmentRepository, DepartmentMapper departmentMapper, ModelMapper mapper) {
         this.departmentRepository = departmentRepository;
         this.departmentMapper = departmentMapper;
+        this.mapper = mapper;
     }
 
     public Page<DepartmentResponse> getAllDepartments(Integer page, Integer size) {
@@ -41,18 +41,13 @@ public class DepartmentService {
     }
 
     public DepartmentResponse getDepartmentById(UUID id) {
-        Department department = departmentRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Curso não encontrado"));
+        Department department = departmentRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Departamento não encontrado"));
         return departmentMapper.toResponseDTO(department);
     }
 
-    public DepartmentResponse updateDepartment(UUID id, Map<String, Object> fields) {
-        Department department = departmentRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Curso não encontrado"));
-
-        fields.forEach((key, value) -> {
-            Field field = ReflectionUtils.findField(Department.class, key);
-            field.setAccessible(true);
-            ReflectionUtils.setField(field, department, value);
-        });
+    public DepartmentResponse updateDepartment(UUID id, DepartmentCreateRequest departmentCreateRequest) {
+        Department department = departmentRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Departamento não encontrado"));
+        mapper.map(departmentCreateRequest, department);
 
         return departmentMapper.toResponseDTO(departmentRepository.save(department));
     }

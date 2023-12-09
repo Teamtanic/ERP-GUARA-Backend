@@ -13,16 +13,14 @@ import java.util.UUID;
 @Data
 @Entity
 public class Role {
-	@Id
-	@GeneratedValue(generator = "UUID")
-	private UUID id;
-	private String name;
-	
-	@OneToMany(mappedBy = "role")
-	@JsonIgnore
-	private List<User> users;
-	
-	@OneToMany(mappedBy = "role")
-	@JsonIgnore
-	private List<RoleDepartmentPrivilege> privileges; 
+    @Id
+    @GeneratedValue(generator = "UUID")
+    private UUID id;
+    private String name;
+
+    @OneToMany(mappedBy = "role")
+    @JsonIgnore
+    private List<User> users;
+
+    private List<Permission> permissions;
 }

@@ -1,9 +1,11 @@
 package com.guarajunior.guararp.domain.service;
 
-import com.guarajunior.guararp.infra.model.*;
-import com.guarajunior.guararp.infra.repository.RoleDepartmentPrivilegeRepository;
+import com.guarajunior.guararp.infra.model.CustomUserDetails;
+import com.guarajunior.guararp.infra.model.Department;
+import com.guarajunior.guararp.infra.model.Permission;
+import com.guarajunior.guararp.infra.model.User;
 import com.guarajunior.guararp.infra.repository.UserRepository;
-import jakarta.transaction.Transactional;
+import com.guarajunior.guararp.util.StringUtils;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,34 +19,31 @@ import java.util.List;
 @Service
 public class AuthorizationService implements UserDetailsService {
     private final UserRepository userRepository;
-    private final RoleDepartmentPrivilegeRepository roleDepartmentPrivilegeRepository;
 
-    public AuthorizationService(UserRepository userRepository, RoleDepartmentPrivilegeRepository roleDepartmentPrivilegeRepository) {
+    public AuthorizationService(UserRepository userRepository) {
         this.userRepository = userRepository;
-        this.roleDepartmentPrivilegeRepository = roleDepartmentPrivilegeRepository;
     }
 
     @Override
-    @Transactional
     public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
         User user = userRepository.findByLogin(login).orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado"));
 
         List<GrantedAuthority> authorities = new ArrayList<>();
+        List<Permission> permissions = user.getRole().getPermissions();
 
-        Role role = user.getRole();
-        Department department = user.getDepartment();
+        if (permissions != null){
+            Department department = user.getDepartment();
 
-        if (role != null && department != null) {
-            List<UserPrivilege> privileges = roleDepartmentPrivilegeRepository.findUserPrivilegesByRoleAndDepartment(role, department);
-
-            authorities.add(new SimpleGrantedAuthority(department.getName()));
-
-            for (UserPrivilege privilege : privileges) {
-                authorities.add(new SimpleGrantedAuthority(privilege.getName()));
+            for (Permission permission : permissions) {
+                authorities.add(new SimpleGrantedAuthority(buildAuthorityString(permission.name(), department.getName())));
             }
         }
 
         return new CustomUserDetails(user.getId(), user.getLogin(), user.getPassword(), user.getActive(), user.getStatus(), authorities);
     }
 
+    private String buildAuthorityString(String privilege, String department) {
+        String departmentUpperCase = StringUtils.toScreamingSnakeCase(department);
+        return privilege + "_ON_" + departmentUpperCase;
+    }
 }
