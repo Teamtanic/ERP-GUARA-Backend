@@ -1,5 +1,6 @@
 package com.guarajunior.guararp.infra.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -11,28 +12,29 @@ import java.util.UUID;
 @Entity
 @Table(name = "supplier_product")
 public class SupplierProduct {
-	@EmbeddedId
-	private SupplierProductKey id;
-	
-	@ManyToOne
-	@MapsId("companyRelationshipId")
-	@JoinColumn(name = "id_company_relationship")
-	private CompanyRelationship companyRelationship;
+    @EmbeddedId
+    private SupplierProductKey id;
 
-	@ManyToOne
-	@MapsId("productWarehouseId")
-	@JoinColumn(name = "id_product_warehouse")
-	private ProductWarehouse product;
-	
-	@Column(name = "price", precision = 10, scale = 2)
-	private BigDecimal price;
-	
+    @ManyToOne
+    @MapsId("companyRelationshipId")
+    @JoinColumn(name = "id_company_relationship")
+    @JsonIgnore
+    private CompanyRelationship companyRelationship;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @MapsId("productWarehouseId")
+    @JoinColumn(name = "id_product_warehouse")
+    private ProductWarehouse product;
+
+    @Column(name = "price", precision = 10, scale = 2)
+    private BigDecimal price;
+
     @Data
     @Embeddable
     public static class SupplierProductKey implements Serializable {
-		private static final long serialVersionUID = 1L;
+        private static final long serialVersionUID = 1L;
 
-		@Column(name = "id_company_relationship")
+        @Column(name = "id_company_relationship")
         private UUID companyRelationshipId;
 
         @Column(name = "id_product_warehouse")

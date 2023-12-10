@@ -10,13 +10,9 @@ import java.util.UUID;
 
 @Data
 public class CompanyRelationshipResponse {
-	private UUID id;
+	private UUID idCompanyRelationship;
 	private Boolean active;
 	
 	@NotBlank(message = "O campo 'Relacionamento' é obrigatório.")
-	private BusinessRelationshipType businessRelationshipType;
-	
-	@NotBlank()
-	@JsonIgnore	
-	private Company company;
+	private BusinessRelationshipType businessRelationship;
 }

@@ -7,6 +7,7 @@ import com.guarajunior.guararp.infra.repository.RoleRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -27,7 +28,7 @@ public class RoleService {
         Pageable pageable = PageRequest.of(page, size);
         Page<Role> rolePage = roleRepository.findAll(pageable);
 
-        return rolePage.map(role -> mapper.map(rolePage, RoleResponse.class));
+        return new PageImpl<>(rolePage.getContent().stream().map(role -> mapper.map(role, RoleResponse.class)).toList(), rolePage.getPageable(), rolePage.getTotalElements());
     }
 
     public RoleResponse createRole(RoleCreateRequest roleCreateRequest) {

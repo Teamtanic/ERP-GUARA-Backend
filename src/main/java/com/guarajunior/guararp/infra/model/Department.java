@@ -13,13 +13,13 @@ import java.util.UUID;
 @Data
 @Entity
 public class Department {
-	@Id
-	@GeneratedValue(generator = "UUID")
-	private UUID id;
-	
-	private String name;
-	
-	@OneToMany(mappedBy = "department")
-	@JsonIgnore
-	private List<User> users;
+    @Id
+    @GeneratedValue(generator = "UUID")
+    private UUID id;
+
+    private String name;
+
+    @OneToMany(mappedBy = "department")
+    @JsonIgnore
+    private List<User> users;
 }

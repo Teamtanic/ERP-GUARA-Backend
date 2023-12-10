@@ -33,12 +33,10 @@ public class Company {
 	@Column(name = "updated_at")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date updatedAt;
-	
-	@JsonBackReference
-	@OneToMany(mappedBy = "company")
+
+	@OneToMany(mappedBy = "company", fetch = FetchType.EAGER)
 	private List<CompanyRelationship> companyRelationships;
-	
-	@JsonBackReference
+
 	@OneToMany(mappedBy = "company", fetch = FetchType.EAGER)
 	private List<Contact> contact;
 }

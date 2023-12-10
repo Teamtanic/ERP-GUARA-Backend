@@ -2,15 +2,18 @@ package com.guarajunior.guararp.domain.service;
 
 import com.guarajunior.guararp.api.dto.company.request.CompanyCreateRequest;
 import com.guarajunior.guararp.api.dto.company.response.CompanyResponse;
-import com.guarajunior.guararp.api.dto.contact.request.ContactCreateRequest;
+import com.guarajunior.guararp.api.dto.contact.response.ContactResponse;
 import com.guarajunior.guararp.api.error.exception.EntityNotFoundException;
 import com.guarajunior.guararp.domain.mapper.CompanyMapper;
 import com.guarajunior.guararp.domain.mapper.CompanyRelationshipMapper;
 import com.guarajunior.guararp.infra.enums.BusinessRelationshipType;
 import com.guarajunior.guararp.infra.model.Company;
 import com.guarajunior.guararp.infra.model.CompanyRelationship;
+import com.guarajunior.guararp.infra.model.Contact;
 import com.guarajunior.guararp.infra.repository.CompanyRelationshipRepository;
 import com.guarajunior.guararp.infra.repository.CompanyRepository;
+import com.guarajunior.guararp.infra.repository.ContactRepository;
+import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -28,14 +31,16 @@ public class CompanyService {
     private final CompanyRelationshipRepository companyRelationshipRepository;
     private final CompanyMapper companyMapper;
     private final CompanyRelationshipMapper companyRelationshipMapper;
-    private final ContactService contactService;
+    private final ModelMapper mapper;
+    private final ContactRepository contactRepository;
 
-    public CompanyService(CompanyRepository companyRepository, CompanyRelationshipRepository companyRelationshipRepository, CompanyMapper companyMapper, CompanyRelationshipMapper companyRelationshipMapper, ContactService contactService) {
+    public CompanyService(CompanyRepository companyRepository, CompanyRelationshipRepository companyRelationshipRepository, CompanyMapper companyMapper, CompanyRelationshipMapper companyRelationshipMapper, ContactService contactService, ModelMapper mapper, ContactRepository contactRepository) {
         this.companyRepository = companyRepository;
         this.companyRelationshipRepository = companyRelationshipRepository;
         this.companyMapper = companyMapper;
         this.companyRelationshipMapper = companyRelationshipMapper;
-        this.contactService = contactService;
+        this.mapper = mapper;
+        this.contactRepository = contactRepository;
     }
 
 
@@ -90,14 +95,11 @@ public class CompanyService {
         responseCompany.setCompanyRelationships(companyRelationshipMapper.toDTOList(companyRelationships));
 
         // Cria o contato
-        ContactCreateRequest contactCreateRequest = new ContactCreateRequest();
-        contactCreateRequest.setEmail(createCompanyDTO.getEmail());
-        contactCreateRequest.setTelephone(createCompanyDTO.getTelephone());
-        contactCreateRequest.setCell_phone(createCompanyDTO.getCell_phone());
-        contactCreateRequest.setCompany(createdCompany);
-        contactService.createContact(contactCreateRequest);
+        Contact contactToCreate = mapper.map(createCompanyDTO, Contact.class);
+        contactToCreate.setCompany(createdCompany);
 
-        responseCompany.setContact(contactCreateRequest);
+        Contact contact = contactRepository.save(contactToCreate);
+        responseCompany.setContact(List.of(mapper.map(contact, ContactResponse.class)));
 
         return responseCompany;
     }

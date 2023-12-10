@@ -18,7 +18,7 @@ public class Role {
     private UUID id;
     private String name;
 
-    @OneToMany(mappedBy = "role")
+    @OneToMany
     @JsonIgnore
     private List<User> users;
 
