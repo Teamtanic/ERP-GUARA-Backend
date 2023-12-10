@@ -1,8 +1,7 @@
 package com.guarajunior.guararp.domain.service;
 
 import com.guarajunior.guararp.infra.model.CustomUserDetails;
-import com.guarajunior.guararp.infra.model.Department;
-import com.guarajunior.guararp.infra.model.Permission;
+import com.guarajunior.guararp.infra.model.RolePermission;
 import com.guarajunior.guararp.infra.model.User;
 import com.guarajunior.guararp.infra.repository.UserRepository;
 import com.guarajunior.guararp.util.StringUtils;
@@ -29,13 +28,14 @@ public class AuthorizationService implements UserDetailsService {
         User user = userRepository.findByLogin(login).orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado"));
 
         List<GrantedAuthority> authorities = new ArrayList<>();
-        List<Permission> permissions = user.getRole().getPermissions();
+        List<RolePermission> rolePermissions = user.getRole().getRolePermissions();
 
-        if (permissions != null){
-            Department department = user.getDepartment();
+        if (rolePermissions != null) {
+            for (RolePermission rolePermission : rolePermissions) {
+                rolePermission.getPermissions().forEach(s ->
+                        authorities.add(new SimpleGrantedAuthority(buildAuthorityString(s, rolePermission.getDepartment().getName())))
+                );
 
-            for (Permission permission : permissions) {
-                authorities.add(new SimpleGrantedAuthority(buildAuthorityString(permission.name(), department.getName())));
             }
         }
 

@@ -6,8 +6,9 @@ import java.util.List;
 import java.util.UUID;
 
 @Data
-public class RoleResponse {
+public class RolePermissionResponse {
     private UUID id;
-    private String name;
-    private List<RolePermissionResponse> rolePermissions;
+    private UUID roleId;
+    private UUID departmentId;
+    private List<String> permissions;
 }

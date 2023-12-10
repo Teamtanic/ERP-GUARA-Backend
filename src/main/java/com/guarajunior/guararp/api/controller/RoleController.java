@@ -1,6 +1,9 @@
 package com.guarajunior.guararp.api.controller;
 
 import com.guarajunior.guararp.api.dto.role.request.RoleCreateRequest;
+import com.guarajunior.guararp.api.dto.role.request.RolePermissionRequest;
+import com.guarajunior.guararp.api.dto.role.request.RoleUpdateRequest;
+import com.guarajunior.guararp.api.dto.role.response.RolePermissionResponse;
 import com.guarajunior.guararp.api.dto.role.response.RoleResponse;
 import com.guarajunior.guararp.domain.service.RoleService;
 import jakarta.validation.Valid;
@@ -33,8 +36,8 @@ public class RoleController {
 
     @PatchMapping("/{id}")
     @Transactional
-    public ResponseEntity<RoleResponse> update(@Valid @PathVariable UUID id, @RequestBody RoleCreateRequest roleCreateRequest) {
-        return ResponseEntity.status(HttpStatus.OK).body(roleService.updateRole(id, roleCreateRequest));
+    public ResponseEntity<RoleResponse> update(@Valid @PathVariable UUID id, @RequestBody RoleUpdateRequest roleUpdateRequest) {
+        return ResponseEntity.status(HttpStatus.OK).body(roleService.updateRole(id, roleUpdateRequest));
     }
 
     @PostMapping
@@ -46,6 +49,25 @@ public class RoleController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable UUID id) {
         roleService.deleteRole(id);
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+    @PostMapping("/{roleId}/permissoes")
+    @Transactional
+    public ResponseEntity<RolePermissionResponse> createRolePermission(@Valid @PathVariable UUID roleId, @RequestBody RolePermissionRequest rolePermissionRequest) {
+        return ResponseEntity.status(HttpStatus.OK).body(roleService.addRolePermission(roleId, rolePermissionRequest));
+    }
+
+    @PatchMapping("/{roleId}/permissoes/{id}")
+    @Transactional
+    public ResponseEntity<RolePermissionResponse> editRolePermission(@Valid @PathVariable UUID roleId, @Valid @PathVariable UUID id, @RequestBody RolePermissionRequest rolePermissionRequest) {
+        return ResponseEntity.status(HttpStatus.OK).body(roleService.editRolePermission(id, rolePermissionRequest));
+    }
+
+    @PostMapping("/{roleId}/permissoes/{id}")
+    @Transactional
+    public ResponseEntity<?> removeRolePermission(@Valid @PathVariable UUID roleId, @Valid @PathVariable UUID id) {
+        roleService.removeRolePermission(id);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 }

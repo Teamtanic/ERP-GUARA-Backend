@@ -1,10 +1,7 @@
 package com.guarajunior.guararp.infra.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import lombok.Data;
 
 import java.util.List;
@@ -22,5 +19,6 @@ public class Role {
     @JsonIgnore
     private List<User> users;
 
-    private List<Permission> permissions;
+    @OneToMany(mappedBy = "role", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<RolePermission> rolePermissions;
 }
