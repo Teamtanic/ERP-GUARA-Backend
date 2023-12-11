@@ -26,7 +26,7 @@ public class RolePermission {
     @JsonIgnore
     private Department department;
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     private List<String> permissions;
 
     public UUID getDepartmentId() {
