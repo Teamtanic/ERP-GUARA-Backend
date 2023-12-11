@@ -21,6 +21,11 @@ public class BankAccountController {
     public BankAccountController(BankAccountService bankAccountService) {
         this.bankAccountService = bankAccountService;
     }
+    
+    @GetMapping("/pesquisa")
+    public ResponseEntity<Page<BankAccountResponse>> searchBankNames(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer size, @RequestParam String name) {
+    	return ResponseEntity.status(HttpStatus.OK).body(bankAccountService.searchBankNames(page, size, name));
+    }
 
     @GetMapping
     public ResponseEntity<Page<BankAccountResponse>> list(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer size) {

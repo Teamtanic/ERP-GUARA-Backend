@@ -39,6 +39,7 @@ public class BankAccountService {
 
     public BankAccountResponse createAccount(@RequestBody BankAccountCreateRequest bankAccountCreateRequest) {
         BankAccount bankAccountToCreate = bankAccountMapper.toEntity(bankAccountCreateRequest);
+        bankAccountToCreate.setActive(true);
         BankAccount createdBankAccount = bankAccountRepository.save(bankAccountToCreate);
 
         return bankAccountMapper.toResponseDTO(createdBankAccount);
@@ -70,6 +71,13 @@ public class BankAccountService {
         bankAccountRepository.save(bankAccount);
 
         return bankAccountMapper.toResponseDTO(bankAccount);
+    }
+    
+    public Page<BankAccountResponse> searchBankNames(Integer page, Integer size, String searchTerm) {
+    	Pageable pageable = PageRequest.of(page, size);
+    	Page<BankAccount> bankAccountPage = bankAccountRepository.findByName(searchTerm, pageable);
+    	
+    	return bankAccountMapper.pageToResponsePageDTO(bankAccountPage);
     }
 
     public void deactivateBankAccount(UUID id) {
