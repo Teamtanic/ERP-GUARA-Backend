@@ -46,6 +46,7 @@ public class ProjectService {
         // Mapeia os dados da requisição para a entidade Project
         Project projectToCreate = projectMapper.toEntity(projectCreateRequest);
         projectToCreate.setActive(true);
+        projectToCreate.setStatus(true);
         projectToCreate.setOfferings(offerings);
         projectToCreate.setCompanyRelationships(companyRelationships);
 

@@ -59,8 +59,9 @@ public class WarehouseService {
         }
 
         Integer qtd = productToCreate.getQuantity();
-        qtd += product.getQuantity();
         productToCreate.setQuantity(qtd);
+        
+        productToCreate.setActive(true);
 
         ProductWarehouse createdProduct = productWarehouseRepository.save(productToCreate);
 
