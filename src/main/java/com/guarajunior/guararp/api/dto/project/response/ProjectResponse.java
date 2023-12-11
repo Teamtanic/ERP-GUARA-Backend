@@ -16,4 +16,5 @@ public class ProjectResponse {
 	private CompanyRelationshipProjectResponse companyRelationship;
 	private Set<OfferingResponse> offerings;
 	private List<UserRoleResponse> users;
+	private boolean status;
 }
