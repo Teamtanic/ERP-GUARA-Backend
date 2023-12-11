@@ -19,7 +19,7 @@ public class BankAccount {
 	@Column(precision = 10, scale = 2)
 	private BigDecimal balance;
 	private String location;
-	private Boolean active;
+	private Boolean active = true;
 	private UUID createdBy;
 	@Column(name = "created_at")
 	@Temporal(TemporalType.TIMESTAMP)

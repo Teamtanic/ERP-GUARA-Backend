@@ -19,7 +19,7 @@ public class Project {
     private String title;
     private String description;
     private Boolean status;
-    private Boolean active;
+    private Boolean active = true;
 
     @ManyToMany(fetch = FetchType.EAGER)
     private Set<Offering> offerings;

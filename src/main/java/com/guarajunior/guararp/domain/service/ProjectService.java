@@ -37,34 +37,31 @@ public class ProjectService {
 
     @Transactional
     public ProjectResponse createProject(ProjectCreateRequest projectCreateRequest) {
-        // Verifica a existência de CompanyRelationships
-        List<CompanyRelationship> companyRelationships = getCompanyRelationships(projectCreateRequest.getCompanyRelationshipIds());
+        Project projectToCreate = projectMapper.toEntity(projectCreateRequest);
 
         Set<Offering> offerings = new HashSet<>();
         projectCreateRequest.getOfferingIds().forEach(uuid -> offerings.add(offeringRepository.findById(uuid).orElseThrow(() -> new RuntimeException(String.format("Offering %s não encontrado", uuid)))));
-
-        // Mapeia os dados da requisição para a entidade Project
-        Project projectToCreate = projectMapper.toEntity(projectCreateRequest);
-        projectToCreate.setActive(true);
         projectToCreate.setOfferings(offerings);
+
+        List<CompanyRelationship> companyRelationships = getCompanyRelationships(projectCreateRequest.getCompanyRelationshipIds(), projectToCreate);
         projectToCreate.setCompanyRelationships(companyRelationships);
 
-        // Salva o projeto
         projectRepository.save(projectToCreate);
 
-        // Cria e associa os usuários ao projeto
         List<ProjectUserRelation> usersInProject = createProjectUserRelations(projectToCreate, projectCreateRequest.getUsers());
         projectToCreate.setProjectUserRelations(usersInProject);
 
         return projectMapper.toResponseDTO(projectToCreate);
     }
 
-    private List<CompanyRelationship> getCompanyRelationships(List<UUID> companyRelationshipIds) {
+    private List<CompanyRelationship> getCompanyRelationships(List<UUID> companyRelationshipIds, Project project) {
         List<CompanyRelationship> companyRelationships = companyRelationshipRepository.findAllById(companyRelationshipIds);
 
         if (companyRelationships.size() != companyRelationshipIds.size()) {
             throw new RuntimeException("Uma ou mais CompanyRelationships não foram encontradas");
         }
+
+        companyRelationships.forEach(companyRelationship -> companyRelationship.getProjects().add(project));
 
         return companyRelationships;
     }

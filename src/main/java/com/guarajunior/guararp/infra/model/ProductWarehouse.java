@@ -17,7 +17,7 @@ public class ProductWarehouse {
 
 	private String product;
 	private Integer quantity;
-	private Boolean active;
+	private Boolean active = true;
 	
 	private UUID createdBy;
 	@Column(name = "created_at")

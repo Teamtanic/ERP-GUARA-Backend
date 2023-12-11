@@ -13,7 +13,7 @@ public class ProjectResponse {
 	private UUID id;
 	private String title;
 	private String description;
-	private CompanyRelationshipProjectResponse companyRelationship;
+	private List<CompanyRelationshipProjectResponse> companyRelationships;
 	private Set<OfferingResponse> offerings;
 	private List<UserRoleResponse> users;
 }
