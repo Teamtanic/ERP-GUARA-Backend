@@ -53,7 +53,7 @@ public class CompanyService {
         relationshipMap.put("fornecedores", BusinessRelationshipType.FORNECEDOR);
 
         if (relationship == null || !relationshipMap.containsKey(relationship)) {
-            companyPage = companyRepository.findAll(pageable);
+            companyPage = companyRepository.findAllWithActiveRelationships(pageable);
         } else {
             companyPage = companyRepository.findByBusinessRelationshipType(relationshipMap.get(relationship), pageable);
         }
@@ -66,6 +66,31 @@ public class CompanyService {
 
         return companyMapper.toResponseDTO(company);
     }
+    
+    public Page<CompanyResponse> searchCompaniesByName(String name, Integer page, Integer size) {
+    	Pageable pageable = PageRequest.of(page, size);
+        Page<Company> companyPage;
+    	
+        companyPage = companyRepository.findByNameContaining(name, pageable);
+        
+        return companyMapper.pageToResponsePageDTO(companyPage);
+    }
+
+    public Page<CompanyResponse> searchCompaniesByNameAndType(String name, Integer page, Integer size, String type) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Company> companyPage;
+
+        BusinessRelationshipType businessRelationshipType = null;
+        if (type != null && !type.isEmpty()) {
+            businessRelationshipType = BusinessRelationshipType.valueOf(type.toUpperCase());
+        }
+
+        companyPage = companyRepository.findByNameContainingAndBusinessRelationshipType(
+                name, businessRelationshipType, pageable);
+
+        return companyMapper.pageToResponsePageDTO(companyPage);
+    }
+
 
     @Transactional
     public CompanyResponse createCompany(CompanyCreateRequest createCompanyDTO) {

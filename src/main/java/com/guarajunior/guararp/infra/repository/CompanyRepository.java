@@ -18,4 +18,24 @@ public interface CompanyRepository extends JpaRepository<Company, UUID> {
 	Page<Company> findByBusinessRelationshipType(@Param("businessRelationshipType") BusinessRelationshipType businessRelationshipType, Pageable pageable);
 
 	Page<Company> findAll(Pageable pageable);
+	
+	@Query("SELECT DISTINCT c FROM Company c " +
+	           "WHERE EXISTS (" +
+	           "    SELECT 1 FROM c.companyRelationships cr " +
+	           "    WHERE cr.active = true" +
+	           ")")
+	Page<Company> findAllWithActiveRelationships(Pageable pageable);
+	
+	@Query("SELECT DISTINCT c FROM Company c " +
+		       "WHERE LOWER(c.name) LIKE LOWER(concat('%', :name, '%')) ")
+    Page<Company> findByNameContaining(@Param("name") String name, Pageable pageable);
+
+    @Query("SELECT c FROM Company c JOIN c.companyRelationships cr " +
+	           "WHERE LOWER(c.name) LIKE LOWER(concat('%', :name, '%')) " +
+	           "AND cr.businessRelationship = :businessRelationshipType " +
+	           "AND cr.active = true")
+    Page<Company> findByNameContainingAndBusinessRelationshipType(
+	            @Param("name") String name,
+	            @Param("businessRelationshipType") BusinessRelationshipType businessRelationshipType,
+	            Pageable pageable);
 }
