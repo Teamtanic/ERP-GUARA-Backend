@@ -120,6 +120,11 @@ public class UserService {
 
         userRepository.save(user);
     }
+    
+    public UserResponse getUserByUsername(String login) {
+    	User user = userRepository.findByLogin(login).orElseThrow(() -> new EntityNotFoundException("Usuario não encontrado com o login: " + login));
+        return userMapper.toResponseDTO(user);
+    }
 
     public void resetPasswordUserRequest(UserEmailRequest userDTO, HttpServletRequest request) {
         String email = userDTO.getEmail();
