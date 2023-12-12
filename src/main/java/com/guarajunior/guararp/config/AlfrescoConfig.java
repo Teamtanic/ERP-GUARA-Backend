@@ -1,6 +1,7 @@
 package com.guarajunior.guararp.config;
 
 import com.guarajunior.guararp.alfresco.producer.CreateSiteProducer;
+import feign.FeignException;
 import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Component;
 
@@ -16,6 +17,10 @@ public class AlfrescoConfig {
 
     @PostConstruct
     public void setupAlfrescoSite() throws IOException {
-        createSiteProducer.execute("guararp1", "GuaraRP", "Espaço para gestão de documentos da Empresa Guará Junior");
+        try {
+            createSiteProducer.execute("guararp", "GuaraRP", "Espaço para gestão de documentos da Empresa Guará Junior");
+        } catch (FeignException ex) {
+            System.out.println(ex.getMessage());
+        }
     }
 }
