@@ -1,5 +1,6 @@
 package com.guarajunior.guararp.infra.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
@@ -30,8 +31,10 @@ public class ProductWarehouse {
 	private Date updatedAt;
 	
 	@OneToMany(mappedBy = "product")
+	@JsonIgnore
     private List<SupplierProduct> supplierProducts;
 	
 	@OneToMany(mappedBy = "productWarehouse")
+	@JsonIgnore
 	private List<TransactionProduct> transactions;
 }

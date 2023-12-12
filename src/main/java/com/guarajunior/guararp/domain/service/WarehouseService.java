@@ -43,6 +43,11 @@ public class WarehouseService {
         Page<ProductWarehouse> productPage = productWarehouseRepository.findAll(pageable);
         return productWarehouseMapper.pageToResponsePageDTO(productPage);
     }
+    public Page<ProductWarehouseResponse> getAllItemsByCompany(UUID idCompany,Integer page, Integer size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<ProductWarehouse> productPage = productWarehouseRepository.findAllByCompanyId(idCompany, pageable);
+            return productWarehouseMapper.pageToResponsePageDTO(productPage);
+    }
 
     @Transactional
     public ProductWarehouseResponse createProduct(@Valid @RequestBody ProductWarehouseCreateRequest product) {

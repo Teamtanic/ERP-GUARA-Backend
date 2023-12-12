@@ -1,5 +1,6 @@
 package com.guarajunior.guararp.api.dto.productwarehouse.response;
 
+import com.guarajunior.guararp.infra.model.SupplierProduct;
 import lombok.Data;
 
 import java.util.List;
@@ -10,5 +11,5 @@ public class ProductWarehouseResponse {
 	private UUID id;
 	private String product;
 	private Integer quantity;
-	private List<ProductSupplierInfoResponse> supplierProducts;
+	private List<SupplierProduct> supplierProducts;
 }

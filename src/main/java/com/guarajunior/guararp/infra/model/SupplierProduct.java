@@ -40,4 +40,11 @@ public class SupplierProduct {
         @Column(name = "id_product_warehouse")
         private UUID productWarehouseId;
     }
+
+    public UUID getCompanyRelationshipId() {
+        return this.companyRelationship.getIdCompanyRelationship();
+    }
+    public UUID getProductWarehouseId() {
+        return this.product.getId();
+    }
 }

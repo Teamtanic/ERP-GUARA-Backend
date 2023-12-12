@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.guarajunior.guararp.infra.enums.BusinessRelationshipType;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.ToString;
 
 import java.util.List;
 import java.util.UUID;
@@ -18,6 +19,7 @@ public class CompanyRelationship {
     @ManyToOne
     @JoinColumn(name = "id_company", nullable = false, referencedColumnName = "id")
     @JsonIgnore
+    @ToString.Exclude
     private Company company;
 
     @Enumerated(EnumType.STRING)
@@ -25,7 +27,8 @@ public class CompanyRelationship {
 
     private Boolean active = true;
 
-    @OneToMany(mappedBy = "companyRelationship", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "companyRelationship")
+    @JsonIgnore
     private List<SupplierProduct> supplierProducts;
 
     @ManyToMany

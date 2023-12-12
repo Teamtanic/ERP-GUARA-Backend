@@ -35,6 +35,12 @@ public class ProjectService {
         return projectMapper.pageToResponsePageDTO(projectPage);
     }
 
+    public Page<ProjectResponse> getAllCompanyProjects(UUID idCompany, Integer page, Integer size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Project> projectPage = projectRepository.findAllByCompanyId(idCompany, pageable);
+        return projectMapper.pageToResponsePageDTO(projectPage);
+    }
+
     @Transactional
     public ProjectResponse createProject(ProjectCreateRequest projectCreateRequest) {
         Project projectToCreate = projectMapper.toEntity(projectCreateRequest);

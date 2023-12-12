@@ -2,7 +2,11 @@ package com.guarajunior.guararp.api.controller;
 
 import com.guarajunior.guararp.api.dto.company.request.CompanyCreateRequest;
 import com.guarajunior.guararp.api.dto.company.response.CompanyResponse;
+import com.guarajunior.guararp.api.dto.productwarehouse.response.ProductWarehouseResponse;
+import com.guarajunior.guararp.api.dto.project.response.ProjectResponse;
 import com.guarajunior.guararp.domain.service.CompanyService;
+import com.guarajunior.guararp.domain.service.ProjectService;
+import com.guarajunior.guararp.domain.service.WarehouseService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -17,9 +21,13 @@ import java.util.UUID;
 @RequestMapping("/empresas")
 public class CompanyController {
     private final CompanyService companyService;
+    private final ProjectService projectService;
+    private final WarehouseService warehouseService;
 
-    public CompanyController(CompanyService companyService) {
+    public CompanyController(CompanyService companyService, ProjectService projectService, WarehouseService warehouseService) {
         this.companyService = companyService;
+        this.projectService = projectService;
+        this.warehouseService = warehouseService;
     }
 
     @GetMapping
@@ -54,5 +62,14 @@ public class CompanyController {
     public ResponseEntity<?> deleteCompanyRelationship(@PathVariable UUID idRelacao) {
         companyService.deactivateCompanyRelationship(idRelacao);
         return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+    @GetMapping("/{id}/projetos")
+    public  ResponseEntity<Page<ProjectResponse>> listCompanyProjects(@PathVariable UUID id, @RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer size) {
+        return ResponseEntity.status(HttpStatus.OK).body(projectService.getAllCompanyProjects(id, page, size));
+    }
+    @GetMapping("/{id}/produtos")
+    public  ResponseEntity<Page<ProductWarehouseResponse>> listCompanyProducts(@PathVariable UUID id, @RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer size) {
+        return ResponseEntity.status(HttpStatus.OK).body(warehouseService.getAllItemsByCompany(id, page, size));
     }
 }
