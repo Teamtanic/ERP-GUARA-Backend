@@ -2,6 +2,7 @@ package com.guarajunior.guararp.domain.service;
 
 import com.guarajunior.guararp.api.dto.document.request.DocumentRequest;
 import com.guarajunior.guararp.api.dto.document.response.DocumentResponse;
+import com.guarajunior.guararp.api.dto.document.response.NodeResponse;
 import com.guarajunior.guararp.api.error.exception.EntityNotFoundException;
 import com.guarajunior.guararp.infra.model.Document;
 import com.guarajunior.guararp.infra.model.DocumentType;
@@ -9,6 +10,7 @@ import com.guarajunior.guararp.infra.model.Project;
 import com.guarajunior.guararp.infra.repository.DocumentRepository;
 import com.guarajunior.guararp.infra.repository.DocumentTypeRepository;
 import com.guarajunior.guararp.infra.repository.ProjectRepository;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.alfresco.core.handler.NodesApi;
@@ -16,16 +18,19 @@ import org.alfresco.core.handler.SitesApi;
 import org.alfresco.core.model.*;
 import org.apache.commons.io.IOUtils;
 import org.modelmapper.ModelMapper;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -35,91 +40,57 @@ public class DocumentService {
     private final NodesApi nodesApi;
     private final SitesApi sitesApi;
     private final DocumentRepository documentRepository;
-    private final ProjectRepository projectRepository;
     private final DocumentTypeRepository documentTypeRepository;
 
-    public Page<DocumentResponse> getAllDocuments(UUID projectId, Integer page, Integer size) {
-        Pageable pageable = PageRequest.of(page, size);
-
-        Project projectById = projectRepository.findById(projectId).orElseThrow(() -> new EntityNotFoundException("Projeto não encontrado"));
-
-        String relativePath = "/Projetos/" + projectById.getTitle();
-
-        NodeChildAssociationPagingList list = Objects.requireNonNull(nodesApi.listNodeChildren(getSiteNodeId(), page * size, size, null, null, null, relativePath, null, null).getBody()).getList();
-
-        List<Document> allById = documentRepository.findAllByAlfrescoIdIn(
-                list.getEntries()
-                        .stream()
-                        .map(node -> node.getEntry().getId())
-                        .toList()
-        );
-
-
-        List<DocumentResponse> documentResponseList = allById
-                .stream()
-                .map(document -> {
-                    DocumentResponse documentResponse = mapper.map(document, DocumentResponse.class);
-                    documentResponse.setDocument(list.getEntries()
-                            .stream()
-                            .filter(node -> node.getEntry().getId().equals(document.getAlfrescoId()))
-                            .findFirst()
-                            .orElseThrow()
-                            .getEntry()
-                    );
-
-                    return documentResponse;
-                })
-                .toList();
-
-        return new PageImpl<>(documentResponseList, pageable, list.getPagination().getTotalItems());
-
-        /*List<DocumentResponse> documentResponses = allByProjectId.getContent().stream().map(document -> {
-            DocumentResponse documentResponse = mapper.map(document, DocumentResponse.class);
-            documentResponse.setDocument(
-                    list
-                            .getEntries()
-                            .stream()
-                            .filter(nodeChildAssociationEntry ->
-                                    nodeChildAssociationEntry.getEntry().getId().equals(documentResponse.getAlfrescoId())
-                            ).findFirst().get().getEntry()
-            );
-
-            return documentResponse;
-        }).toList();*/
-    }
-
-    public DocumentResponse getDocumentById(UUID uuid) {
+    public NodeResponse getDocumentById(UUID uuid) {
         Document document = documentRepository.findById(uuid).orElseThrow(() -> new EntityNotFoundException("Documento não encontrado"));
         Node node = Objects.requireNonNull(nodesApi.getNode(document.getAlfrescoId(), null, null, null).getBody()).getEntry();
 
-        DocumentResponse documentResponse = mapper.map(document, DocumentResponse.class);
-        documentResponse.setDocument(node);
+        NodeResponse nodeResponse = mapper.map(node, NodeResponse.class);
+        nodeResponse.setDocument(mapper.map(document, DocumentResponse.class));
 
-        return documentResponse;
+        return nodeResponse;
     }
 
-    public DocumentResponse handleFileUpload(UUID projectId, DocumentRequest documentRequest) {
-        Project projectById = projectRepository.findById(projectId).orElseThrow(() -> new EntityNotFoundException("Projeto não encontrado"));
-        String folderPath = "/Projetos/" + projectById.getTitle();
-
+    public NodeResponse handleFileUpload(DocumentRequest documentRequest) {
         Node newFile = uploadFile(
                 getSiteNodeId(),
                 documentRequest.getFile().getOriginalFilename(),
                 documentRequest.getTitle(),
                 documentRequest.getDescription(),
-                folderPath,
+                documentRequest.getFolderPath(),
                 documentRequest.getFile()
         );
 
         DocumentType documentType = documentTypeRepository.findById(documentRequest.getDocumentTypeId()).orElseThrow(() -> new EntityNotFoundException("DocumentType não encontrado"));
 
-        Document document = new Document(documentType, Objects.requireNonNull(newFile).getId(), projectById);
+        Document document = new Document(documentType, Objects.requireNonNull(newFile).getId());
         documentRepository.save(document);
 
-        DocumentResponse documentResponse = mapper.map(document, DocumentResponse.class);
-        documentResponse.setDocument(newFile);
+        NodeResponse nodeResponse = mapper.map(newFile, NodeResponse.class);
+        nodeResponse.setDocument(mapper.map(document, DocumentResponse.class));
 
-        return documentResponse;
+        return nodeResponse;
+    }
+
+    public List<NodeResponse> listFolderItems(String folderPath) {
+        NodeChildAssociationPagingList nodeList = Objects.requireNonNull(nodesApi.listNodeChildren(getSiteNodeId(), null, null, null, null, null, folderPath, null, null).getBody()).getList();
+
+        List<String> nodeIds = nodeList.getEntries().stream().map(node -> node.getEntry().getId()).toList();
+        List<Document> documents = documentRepository.findAllByAlfrescoIdIn(nodeIds);
+
+        return nodeList.getEntries().stream().map(node -> {
+            NodeChildAssociation entry = node.getEntry();
+            NodeResponse nodeResponse = mapper.map(entry, NodeResponse.class);
+
+            Optional<Document> optionalDocument = documents.stream()
+                    .filter(document -> document.getAlfrescoId().equals(entry.getId()))
+                    .findFirst();
+
+            optionalDocument.ifPresent(document -> nodeResponse.setDocument(mapper.map(document, DocumentResponse.class)));
+
+            return nodeResponse;
+        }).toList();
     }
 
     private String getSiteNodeId() {
@@ -174,5 +145,10 @@ public class DocumentService {
                 .createNode(parentFolderId, nodeBodyCreate, null, null, null, null, null)
                 .getBody()).getEntry();
     }
+
+    public ResponseEntity<Resource> getDocumentContentById(String uuid) {
+        return nodesApi.getNodeContent(uuid, null, null, null);
+    }
+
 
 }

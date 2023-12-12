@@ -12,6 +12,10 @@ public class DocumentRequest {
     private UUID documentTypeId;
     private String title;
     private String description;
+
+    @NotNull(message = "'folderPath' está faltando. Defina o caminho do diretório que o arquivo será salvo")
+    private String folderPath;
+
     @NotNull
     private MultipartFile file;
 }

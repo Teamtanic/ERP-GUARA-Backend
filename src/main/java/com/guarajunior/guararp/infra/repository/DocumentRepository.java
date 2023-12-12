@@ -9,6 +9,5 @@ import java.util.List;
 import java.util.UUID;
 
 public interface DocumentRepository extends JpaRepository<Document, UUID> {
-    Page<Document> findAllByProjectId(UUID projectId, Pageable pageable);
     List<Document> findAllByAlfrescoIdIn(List<String> uuids);
 }

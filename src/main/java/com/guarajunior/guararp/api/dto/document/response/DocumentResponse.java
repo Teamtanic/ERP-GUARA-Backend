@@ -8,9 +8,7 @@ import java.util.UUID;
 
 @Data
 public class DocumentResponse {
-    public UUID projectId;
     private UUID id;
     private DocumentType documentType;
     private String alfrescoId;
-    private Node document;
 }

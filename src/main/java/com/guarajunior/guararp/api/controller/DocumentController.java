@@ -1,17 +1,14 @@
 package com.guarajunior.guararp.api.controller;
 
-import com.guarajunior.guararp.alfresco.producer.CreateSiteProducer;
 import com.guarajunior.guararp.api.dto.document.request.DocumentRequest;
-import com.guarajunior.guararp.api.dto.document.response.DocumentResponse;
+import com.guarajunior.guararp.api.dto.document.response.NodeResponse;
 import com.guarajunior.guararp.domain.service.DocumentService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.alfresco.core.model.Site;
+import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
-import java.net.URI;
 import java.util.UUID;
 
 @RestController
@@ -19,26 +16,24 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class DocumentController {
     private final DocumentService documentService;
-    final private CreateSiteProducer createSiteProducer;
 
-    @PostMapping("/documentos/criar-site")
-    public ResponseEntity<Site> createSite() throws IOException {
-        Site site = createSiteProducer.execute("guararp");
-        return ResponseEntity.created(URI.create(site.getId())).body(site);
+    @GetMapping("/documentos")
+    public ResponseEntity<?> listFolderItems(@RequestParam(defaultValue = "") String folderPath) {
+        return ResponseEntity.ok(documentService.listFolderItems(folderPath));
     }
 
-    @GetMapping("/projeto/{projectId}/documentos/")
-    public ResponseEntity<?> getAllDocumentsByProjectId(@PathVariable UUID projectId, @RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer size) {
-        return ResponseEntity.ok(documentService.getAllDocuments(projectId, page, size));
-    }
-
-    @PostMapping("/projeto/{projectId}/documentos/upload")
-    public ResponseEntity<DocumentResponse> handleFileUpload(@PathVariable UUID projectId, @Valid @ModelAttribute DocumentRequest documentRequest) {
-        return ResponseEntity.ok(documentService.handleFileUpload(projectId, documentRequest));
+    @PostMapping("/documentos/upload")
+    public ResponseEntity<NodeResponse> handleFileUpload(@Valid @ModelAttribute DocumentRequest documentRequest) {
+        return ResponseEntity.ok(documentService.handleFileUpload(documentRequest));
     }
 
     @GetMapping("/documentos/{documentId}")
-    public ResponseEntity<DocumentResponse> getDocumentById(@PathVariable UUID documentId) {
+    public ResponseEntity<NodeResponse> getDocumentById(@PathVariable UUID documentId) {
         return ResponseEntity.ok(documentService.getDocumentById(documentId));
+    }
+
+    @GetMapping("/documentos/{documentId}/content")
+    public ResponseEntity<Resource> getDocumentContentById(@PathVariable String documentId) {
+        return documentService.getDocumentContentById(documentId);
     }
 }

@@ -43,7 +43,4 @@ public class Project {
 
     @ManyToMany(mappedBy = "projects", fetch = FetchType.EAGER)
     private List<CompanyRelationship> companyRelationships;
-
-    @OneToMany
-    private  Set<Document> documents;
 }

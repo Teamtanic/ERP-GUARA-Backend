@@ -22,17 +22,11 @@ public class Document {
 
     private String alfrescoId;
 
-    @ManyToOne
-    @JsonIgnore
-    @NotNull
-    private Project project;
-
     public Document() {
     }
 
-    public Document(DocumentType documentType, String alfrescoId, Project project) {
+    public Document(DocumentType documentType, String alfrescoId) {
         this.documentType = documentType;
         this.alfrescoId = alfrescoId;
-        this.project = project;
     }
 }

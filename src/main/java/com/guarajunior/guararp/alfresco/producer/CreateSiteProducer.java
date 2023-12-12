@@ -16,12 +16,12 @@ import java.util.Objects;
 public class CreateSiteProducer {
     final SitesApi sitesApi;
 
-    public Site execute(String siteId) throws IOException {
+    public Site execute(String siteId, String title, String description) throws IOException {
         Site site = Objects.requireNonNull(sitesApi.createSite(
                 new SiteBodyCreate()
                         .id(siteId)
-                        .title("title-" + siteId)
-                        .description("description-" + siteId)
+                        .title(title)
+                        .description(description)
                         .visibility(SiteBodyCreate.VisibilityEnum.PUBLIC),
                 null, null, null).getBody()).getEntry();
 
