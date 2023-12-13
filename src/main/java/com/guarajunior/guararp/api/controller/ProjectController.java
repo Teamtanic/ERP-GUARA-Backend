@@ -32,6 +32,14 @@ public class ProjectController {
     public ResponseEntity<ProjectResponse> getById(@PathVariable UUID id) {
         return ResponseEntity.status(HttpStatus.OK).body(projectService.getProjectById(id));
     }
+    
+    @GetMapping("/pesquisa")
+    public ResponseEntity<Page<ProjectResponse>> searchProjects(
+            @RequestParam String title,
+            @RequestParam(defaultValue = "0") Integer page,
+            @RequestParam(defaultValue = "3") Integer size) {
+        return ResponseEntity.status(HttpStatus.OK).body(projectService.searchProjectsByTitle(title, page, size));
+    }
 
     @PatchMapping("/{id}")
     @Transactional

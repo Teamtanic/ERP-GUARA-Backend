@@ -19,4 +19,7 @@ public interface OfferingRepository extends JpaRepository<Offering, UUID> {
 	
 	@Query("SELECT o FROM Offering o WHERE o.active = true")
 	Page<Offering> findAll(Pageable pageable);
+	
+	@Query("SELECT o FROM Offering o WHERE LOWER(o.description) LIKE LOWER(concat('%', :description, '%')) AND o.active = true")
+	Page<Offering> findByDescriptionContaining(String description, Pageable pageable);
 }

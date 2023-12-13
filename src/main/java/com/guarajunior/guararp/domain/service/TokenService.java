@@ -2,6 +2,7 @@ package com.guarajunior.guararp.domain.service;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.guarajunior.guararp.api.dto.user.response.UserResponse;
 import com.guarajunior.guararp.infra.model.User;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,16 +24,27 @@ public class TokenService {
     private String secret;
     @Autowired
     private AuthorizationService authorizationService;
+    @Autowired
+    private UserService userService;
 
     public String generateToken(User user) {
         Algorithm algorithm = Algorithm.HMAC256(secret);
         UserDetails userDetails = authorizationService.loadUserByUsername(user.getLogin());
         Collection<? extends GrantedAuthority> authorities = userDetails.getAuthorities();
 
+        UserResponse userInfo = userService.getUserByUsername(user.getLogin());
+        
         List<String> authorityStrings = authorities.stream()
             .map(GrantedAuthority::getAuthority)
             .collect(Collectors.toList());
-        return JWT.create().withIssuer("auth-api").withSubject(user.getLogin()).withExpiresAt(genExpirationDate()).withClaim("permissions", authorityStrings).sign(algorithm);
+        return JWT.create()
+        		.withIssuer("auth-api")
+        		.withSubject(user.getLogin())
+        		.withExpiresAt(genExpirationDate())
+        		.withClaim("permissions", authorityStrings)
+        		.withClaim("id", userInfo.getId().toString())
+        		.withClaim("name", userInfo.getName())
+        		.sign(algorithm);
     }
 
     public String validateToken(String token) {

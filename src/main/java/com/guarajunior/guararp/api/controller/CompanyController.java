@@ -45,6 +45,21 @@ public class CompanyController {
     public ResponseEntity<CompanyResponse> update(@Valid @PathVariable UUID id, @RequestBody Map<String, Object> fields) {
         return ResponseEntity.status(HttpStatus.OK).body(companyService.updateCompany(id, fields));
     }
+    
+    @GetMapping("/pesquisa")
+    public ResponseEntity<Page<CompanyResponse>> searchCompanies(
+            @RequestParam String name,
+            @RequestParam(defaultValue = "0") Integer page,
+            @RequestParam(defaultValue = "3") Integer size,
+            @RequestParam(required = false) String type) {
+        if (type != null) {
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(companyService.searchCompaniesByNameAndType(name, page, size, type));
+        } else {
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(companyService.searchCompaniesByName(name, page, size));
+        }
+    }
 
     @PostMapping
     @Transactional

@@ -89,6 +89,12 @@ public class WarehouseService {
 
         return productWarehouseMapper.toResponseDTO(createdProduct);
     }
+    
+    public Page<ProductWarehouseResponse> searchProductsByProduto(String product, Integer page, Integer size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<ProductWarehouse> productPage = productWarehouseRepository.findByProductContaining(product, pageable);
+        return productWarehouseMapper.pageToResponsePageDTO(productPage);
+    }
 
     public ProductWarehouseResponse getProductById(UUID id) {
         ProductWarehouse product = productWarehouseRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Produto não encontrado com id: " + id));
