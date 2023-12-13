@@ -32,6 +32,12 @@ public class DepartmentService {
 
         return departmentMapper.pageToResponsePageDTO(departmentPage);
     }
+    
+    public Page<DepartmentResponse> searchDepartmentsByName(String name, Integer page, Integer size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Department> departmentPage = departmentRepository.findByNameContaining(name, pageable);
+        return departmentMapper.pageToResponsePageDTO(departmentPage);
+    }
 
     public DepartmentResponse createDepartment(DepartmentCreateRequest departmentCreateRequest) {
         Department departmentToCreate = departmentMapper.toEntity(departmentCreateRequest);

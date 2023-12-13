@@ -30,6 +30,14 @@ public class DepartmentController {
     public ResponseEntity<DepartmentResponse> getById(@PathVariable UUID id) {
         return ResponseEntity.status(HttpStatus.OK).body(departmentService.getDepartmentById(id));
     }
+    
+    @GetMapping("/pesquisa")
+    public ResponseEntity<Page<DepartmentResponse>> searchDepartments(
+            @RequestParam String name,
+            @RequestParam(defaultValue = "0") Integer page,
+            @RequestParam(defaultValue = "3") Integer size) {
+        return ResponseEntity.status(HttpStatus.OK).body(departmentService.searchDepartmentsByName(name, page, size));
+    }
 
     @PatchMapping("/{id}")
     @Transactional

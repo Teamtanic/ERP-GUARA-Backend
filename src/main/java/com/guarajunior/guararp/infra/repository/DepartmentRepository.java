@@ -9,4 +9,6 @@ import java.util.UUID;
 
 public interface DepartmentRepository extends JpaRepository<Department, UUID> {
 	Page<Department> findAll(Pageable pageable);
+	
+	Page<Department> findByNameContaining(String name, Pageable pageable);
 }
