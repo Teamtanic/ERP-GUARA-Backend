@@ -39,6 +39,14 @@ public class CourseController {
         return ResponseEntity.status(HttpStatus.OK).body(courseService.updateCourse(id, fields));
     }
 
+    @GetMapping("/pesquisa")
+    public ResponseEntity<Page<CourseResponse>> searchCourses(
+            @RequestParam String name,
+            @RequestParam(defaultValue = "0") Integer page,
+            @RequestParam(defaultValue = "3") Integer size) {
+        return ResponseEntity.status(HttpStatus.OK).body(courseService.searchCoursesByName(name, page, size));
+    }
+    
     @PostMapping
     @Transactional
     public ResponseEntity<CourseResponse> register(@Valid @RequestBody CourseCreateRequest courseCreateRequest) {

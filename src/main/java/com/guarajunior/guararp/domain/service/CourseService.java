@@ -34,6 +34,12 @@ public class CourseService {
         Page<Course> coursePage = courseRepository.findAll(pageable);
         return courseMapper.pageToResponsePageDTO(coursePage);
     }
+    
+    public Page<CourseResponse> searchCoursesByName(String name, Integer page, Integer size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Course> coursePage = courseRepository.findByNameContaining(name, pageable);
+        return courseMapper.pageToResponsePageDTO(coursePage);
+    }
 
     public CourseResponse createCourse(CourseCreateRequest courseCreateRequest) {
         Course courseToCreate = courseMapper.toEntity(courseCreateRequest);

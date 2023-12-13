@@ -14,4 +14,6 @@ public interface CourseRepository extends JpaRepository<Course, Integer> {
 
 	@Query("SELECT c FROM Course c LEFT JOIN FETCH c.users WHERE c.id = :courseId")
 	Optional<Course> findByIdWithUsers(@Param("courseId") Integer courseId);
+	
+	Page<Course> findByNameContaining(String name, Pageable pageable);
 }
