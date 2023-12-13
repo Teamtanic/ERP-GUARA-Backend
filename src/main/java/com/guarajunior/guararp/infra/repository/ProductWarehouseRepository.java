@@ -14,6 +14,9 @@ public interface ProductWarehouseRepository extends JpaRepository<ProductWarehou
 	@Query("SELECT pw FROM ProductWarehouse pw WHERE pw.active = true")
 	Page<ProductWarehouse> findAll(Pageable pageable);
 
-	@Query("SELECT  DISTINCT p FROM ProductWarehouse p JOIN p.supplierProducts sp JOIN sp.companyRelationship cr WHERE cr.company.id = :idCompany")
+	@Query("SELECT DISTINCT p FROM ProductWarehouse p JOIN p.supplierProducts sp JOIN sp.companyRelationship cr WHERE cr.company.id = :idCompany")
 	Page<ProductWarehouse> findAllByCompanyId(UUID idCompany, Pageable pageable);
+	
+	@Query("SELECT DISTINCT p FROM ProductWarehouse p WHERE LOWER(p.product) LIKE LOWER(concat('%', :product, '%')) AND p.active = true")
+	Page<ProductWarehouse> findByProductContaining(String product, Pageable pageable);
 }

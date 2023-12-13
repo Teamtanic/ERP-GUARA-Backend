@@ -36,6 +36,14 @@ public class WarehouseController {
     public ResponseEntity<ProductWarehouseResponse> register(@Valid @RequestBody ProductWarehouseCreateRequest productWarehouseCreateRequest) {
         return ResponseEntity.status(HttpStatus.CREATED).body(warehouseService.createProduct(productWarehouseCreateRequest));
     }
+    
+    @GetMapping("/pesquisa")
+    public ResponseEntity<Page<ProductWarehouseResponse>> searchProducts(
+            @RequestParam String product,
+            @RequestParam(defaultValue = "0") Integer page,
+            @RequestParam(defaultValue = "3") Integer size) {
+    	return ResponseEntity.status(HttpStatus.OK).body(warehouseService.searchProductsByProduto(product, page, size));
+    }
 
     @PatchMapping("/{id}")
     @Transactional
