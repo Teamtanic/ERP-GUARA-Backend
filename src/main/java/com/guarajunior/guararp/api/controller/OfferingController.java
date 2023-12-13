@@ -30,6 +30,14 @@ public class OfferingController {
     public ResponseEntity<OfferingResponse> getById(@PathVariable UUID id) {
         return ResponseEntity.status(HttpStatus.OK).body(offeringService.getOfferingById(id));
     }
+    
+    @GetMapping("/pesquisa")
+    public ResponseEntity<Page<OfferingResponse>> searchOffers(
+            @RequestParam String description,
+            @RequestParam(defaultValue = "0") Integer page,
+            @RequestParam(defaultValue = "3") Integer size) {
+        return ResponseEntity.status(HttpStatus.OK).body(offeringService.searchOffersByDescription(description, page, size));
+    }
 
     @PatchMapping("/{id}")
     @Transactional

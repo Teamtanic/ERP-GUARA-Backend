@@ -50,6 +50,13 @@ public class OfferingService {
         return offeringMapper.toResponseDTO(createdOffering);
 
     }
+    
+    public Page<OfferingResponse> searchOffersByDescription(String description, Integer page, Integer size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Offering> offeringPage = offeringRepository.findByDescriptionContaining(description, pageable);
+        
+        return offeringMapper.pageToResponsePageDTO(offeringPage);
+    }
 
     public OfferingResponse getOfferingById(UUID id) {
         Offering offering = offeringRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Oferta não encontrada com id: " + id));
