@@ -27,9 +27,9 @@ public class DocumentController {
         return ResponseEntity.ok(documentService.handleFileUpload(documentRequest));
     }
 
-    @GetMapping("/documentos/{documentId}")
-    public ResponseEntity<NodeResponse> getDocumentById(@PathVariable UUID documentId) {
-        return ResponseEntity.ok(documentService.getDocumentById(documentId));
+    @GetMapping("/documentos/{alfrescoId}")
+    public ResponseEntity<NodeResponse> getDocumentById(@PathVariable String alfrescoId) {
+        return ResponseEntity.ok(documentService.getDocumentById(alfrescoId));
     }
 
     @GetMapping("/documentos/{documentId}/content")
