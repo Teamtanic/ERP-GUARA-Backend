@@ -9,4 +9,6 @@ import java.util.UUID;
 
 public interface RoleRepository extends JpaRepository<Role, UUID> {
 	Page<Role> findAll(Pageable pageable);
+	
+	Page<Role> findByNameContaining(String name, Pageable pageable);
 }

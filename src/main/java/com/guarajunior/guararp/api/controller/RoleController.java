@@ -33,6 +33,14 @@ public class RoleController {
     public ResponseEntity<RoleResponse> getById(@PathVariable UUID id) {
         return ResponseEntity.status(HttpStatus.OK).body(roleService.getRoleById(id));
     }
+    
+    @GetMapping("/pesquisa")
+    public ResponseEntity<Page<RoleResponse>> searchRoles(
+            @RequestParam String name,
+            @RequestParam(defaultValue = "0") Integer page,
+            @RequestParam(defaultValue = "3") Integer size) {
+        return ResponseEntity.status(HttpStatus.OK).body(roleService.searchRolesByName(name, page, size));
+    }
 
     @PatchMapping("/{id}")
     @Transactional

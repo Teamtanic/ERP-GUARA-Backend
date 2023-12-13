@@ -43,6 +43,12 @@ public class RoleService {
 
         return new PageImpl<>(rolePage.getContent().stream().map(role -> mapper.map(role, RoleResponse.class)).toList(), rolePage.getPageable(), rolePage.getTotalElements());
     }
+    
+    public Page<RoleResponse> searchRolesByName(String name, Integer page, Integer size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Role> rolePage = roleRepository.findByNameContaining(name, pageable);
+        return new PageImpl<>(rolePage.getContent().stream().map(role -> mapper.map(role, RoleResponse.class)).toList(), rolePage.getPageable(), rolePage.getTotalElements());
+    }
 
     public RoleResponse createRole(RoleCreateRequest roleCreateRequest) {
         Role roleToCreate = mapper.map(roleCreateRequest, Role.class);
