@@ -40,6 +40,12 @@ public class ProjectService {
         Page<Project> projectPage = projectRepository.findAllByCompanyId(idCompany, pageable);
         return projectMapper.pageToResponsePageDTO(projectPage);
     }
+    
+    public Page<ProjectResponse> searchProjectsByTitle(String title, Integer page, Integer size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Project> projectPage = projectRepository.findByTitleContaining(title, pageable);
+        return projectMapper.pageToResponsePageDTO(projectPage);
+    }
 
     @Transactional
     public ProjectResponse createProject(ProjectCreateRequest projectCreateRequest) {

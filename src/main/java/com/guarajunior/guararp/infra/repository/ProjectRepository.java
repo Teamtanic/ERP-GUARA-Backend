@@ -12,4 +12,8 @@ public interface ProjectRepository extends JpaRepository<Project, UUID> {
     Page<Project> findAllByActive(Boolean active, Pageable pageable);
     @Query("SELECT DISTINCT p FROM Project p JOIN p.companyRelationships cr WHERE cr.company.id = :companyId")
     Page<Project> findAllByCompanyId(UUID companyId, Pageable pageable);
+    
+    @Query("SELECT DISTINCT p FROM Project p WHERE LOWER(p.title) LIKE LOWER(concat('%', :title, '%')) AND p.active = true")
+    Page<Project> findByTitleContaining(String title, Pageable pageable);
+    
 }
