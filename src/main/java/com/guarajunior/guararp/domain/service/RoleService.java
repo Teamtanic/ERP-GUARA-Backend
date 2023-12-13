@@ -12,12 +12,14 @@ import com.guarajunior.guararp.infra.repository.RolePermissionRepository;
 import com.guarajunior.guararp.infra.repository.RoleRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.PersistenceContext;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
@@ -27,6 +29,7 @@ import java.util.stream.Stream;
 public class RoleService {
     private final RoleRepository roleRepository;
     private final ModelMapper mapper;
+    @PersistenceContext
     private final EntityManager entityManager;
     private final RolePermissionRepository rolePermissionRepository;
 
@@ -50,17 +53,20 @@ public class RoleService {
         return new PageImpl<>(rolePage.getContent().stream().map(role -> mapper.map(role, RoleResponse.class)).toList(), rolePage.getPageable(), rolePage.getTotalElements());
     }
 
+    @Transactional
     public RoleResponse createRole(RoleCreateRequest roleCreateRequest) {
         Role roleToCreate = mapper.map(roleCreateRequest, Role.class);
+        Role role = roleRepository.save(roleToCreate);
 
         List<RolePermission> rolePermissions = roleCreateRequest.getRolePermissions().stream().map(rp -> {
             Department department = entityManager.getReference(Department.class, rp.getDepartmentId());
-            return new RolePermission(null, roleToCreate, department, rp.getPermissions().stream().map(Enum::name).toList());
+            List<String> permissions = rp.getPermissions().stream().map(Enum::name).toList();
+            return rolePermissionRepository.save(new RolePermission(null, role, department, permissions));
         }).toList();
 
-        roleToCreate.setRolePermissions(rolePermissions);
+        role.setRolePermissions(rolePermissions);
 
-        return mapper.map(roleRepository.save(roleToCreate), RoleResponse.class);
+        return mapper.map(role, RoleResponse.class);
     }
 
     public RoleResponse getRoleById(UUID id) {
