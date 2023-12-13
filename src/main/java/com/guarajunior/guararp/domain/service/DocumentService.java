@@ -42,8 +42,8 @@ public class DocumentService {
     private final DocumentRepository documentRepository;
     private final DocumentTypeRepository documentTypeRepository;
 
-    public NodeResponse getDocumentById(UUID uuid) {
-        Document document = documentRepository.findById(uuid).orElseThrow(() -> new EntityNotFoundException("Documento não encontrado"));
+    public NodeResponse getDocumentById(String alfrescoId) {
+        Document document = documentRepository.findByAlfrescoId(alfrescoId).orElseThrow(() -> new EntityNotFoundException("Documento não encontrado"));
         Node node = Objects.requireNonNull(nodesApi.getNode(document.getAlfrescoId(), null, null, null).getBody()).getEntry();
 
         NodeResponse nodeResponse = mapper.map(node, NodeResponse.class);
